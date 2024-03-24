@@ -1,0 +1,11 @@
+.idea/*
+*.iml
+out
+gen
+.DS_Store
+Dependencies/
+Properties/
+Obj/
+Config/
+Extensions/
+Bin/
