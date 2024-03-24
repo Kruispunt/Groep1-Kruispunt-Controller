@@ -6,6 +6,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <UserSecretsId>dotnet-StoplichtController-F09F4050-93F9-40B8-8C34-F1987311B861</UserSecretsId>
         <RootNamespace>StoplichtController</RootNamespace>
+        <ServerGarbageCollection>true</ServerGarbageCollection>
     </PropertyGroup>
 
     <ItemGroup>
