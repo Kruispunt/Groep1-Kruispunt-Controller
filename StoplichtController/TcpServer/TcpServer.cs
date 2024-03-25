@@ -16,10 +16,10 @@ public class TcpServer
     private async void StartServer(int port)
     {
         IPHostEntry ipHostInfo = await Dns.GetHostEntryAsync(Dns.GetHostName());
-        IPAddress ipAddress = ipHostInfo.AddressList[0];
+        // IPAddress ipAddress = ipHostInfo.AddressList[0];
         
         // IPAddress ipAddress = IPAddress.Parse("169.254.147.222"); // Parses an IP address from a string
-        // IPAddress ipAddress = IPAddress.Loopback; // sets ip to localHost
+        IPAddress ipAddress = IPAddress.Loopback; // sets ip to localHost
         
         IPEndPoint ipEndPoint = new(ipAddress, port);
         
@@ -49,7 +49,7 @@ public class TcpServer
             Console.WriteLine(
                 $"Socket server received message: \"{response}\"");
 
-            var ackMessage = "Hello, from server!";
+            var ackMessage = "2";
             var echoBytes = Encoding.UTF8.GetBytes(ackMessage);
             await handler.SendAsync(echoBytes, 0);
             Console.WriteLine(
