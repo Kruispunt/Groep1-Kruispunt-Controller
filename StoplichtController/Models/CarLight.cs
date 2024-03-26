@@ -1,15 +1,16 @@
 using System.Text.Json;
+using StoplichtController.Messages;
 
 namespace StoplichtController.Models;
 
 [Serializable]
-public class TrafficLight
+public class CarLight
 {
     public LightState state { get; private set; }
     private bool hasWaitingVehicle = false;
     private bool hasWaitingPriorityVehicle = false;
     
-    public TrafficLight()
+    public CarLight()
     {
         state = LightState.Red;
     }
@@ -40,8 +41,6 @@ public class TrafficLight
             return false;
         }
     }
-    
-    
 }
 
 public enum LightState

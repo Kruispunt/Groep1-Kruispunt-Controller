@@ -4,6 +4,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using StoplichtController.Controller;
 using StoplichtController.Messages;
 
 namespace StoplichtController.TcpServer;
@@ -12,6 +13,7 @@ public class TcpServer
 {
     private TcpListener _listener;
     private bool _isRunning;
+    private TrafficLightController _trafficLightController = new ();
 
     public TcpServer(string ipAddress, int port)
     {
@@ -58,17 +60,19 @@ public class TcpServer
                 using (StringReader stringReader = new StringReader(message))
                 using (JsonTextReader jsonReader = new JsonTextReader(stringReader))
                 {
+                    MessageFactory factory = new MessageFactory();
+                    factory.Register("CarMessage", () => new CarMessage());
+                    factory.Register("PedestrianMessage", () => new PedestrianMessage());
+                    
                     JsonSerializer serializer = new JsonSerializer();
+                    serializer.Converters.Add(new MessageJsonConverter(factory));
 
                     while (jsonReader.Read())
                     {
                         if (jsonReader.TokenType == JsonToken.StartObject)
                         {
-                            TrafficLightMessage msg = serializer.Deserialize<TrafficLightMessage>(jsonReader);
-                            Console.WriteLine($"Received update: HasCarWaiting={msg.HasCarWaiting}, HasPriorityVehicle={msg.HasPriorityVehicle}");
-
-                            // Handle the update (e.g., save to object)
-                            HandleUpdate(msg);
+                            Message msg = serializer.Deserialize<Message>(jsonReader);
+                            _trafficLightController.HandleUpdate(msg);
                         }
                     }
                 }
@@ -80,10 +84,5 @@ public class TcpServer
         {
             Console.WriteLine($"Error: {ex.Message}");
         }
-    }
-
-    private void HandleUpdate(TrafficLightMessage update)
-    {
-        Console.WriteLine("handling update...");
     }
 }
