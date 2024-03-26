@@ -1,32 +1,9 @@
-using StoplichtController;
-using StoplichtController.QueueService;
+using System.Net;
+using StoplichtController.TcpServer;
 
-var builder = Host.CreateApplicationBuilder(args);
+var server = new TcpServer(12345);
 
-// Add services to the container.
-
-// Add the Worker service
-builder.Services.AddHostedService<Worker>();
-
-// Add the MonitorLoop
-builder.Services.AddSingleton<MonitorLoop>();
-builder.Services.AddHostedService<QueuedHostedService>();
-builder.Services.AddSingleton<IBackgroundTaskQueue>(_ => 
-{
-    if (!int.TryParse(builder.Configuration["QueueCapacity"], out var queueCapacity))
-    {
-        queueCapacity = 100;
-    }
-
-    return new DefaultBackgroundTaskQueue(queueCapacity);
-});
+server.Start();
 
 
-var host = builder.Build();
 
-// Start the MonitorLoop
-MonitorLoop monitorLoop = host.Services.GetRequiredService<MonitorLoop>()!;
-monitorLoop.StartMonitorLoop();
-
-
-host.Run();
