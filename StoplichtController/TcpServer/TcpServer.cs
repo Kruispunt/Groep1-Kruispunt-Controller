@@ -1,108 +1,89 @@
+using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using StoplichtController.Messages;
-using StoplichtController.Models;
 
 namespace StoplichtController.TcpServer;
 
 public class TcpServer
 {
     private TcpListener _listener;
-    private TrafficLight _trafficLight;
-    private bool hasCarWaiting = false;
+    private bool _isRunning;
 
-    public TcpServer(int port)
+    public TcpServer(string ipAddress, int port)
     {
-        _listener = new TcpListener(IPAddress.Loopback, port);
-        _trafficLight = new TrafficLight();
+        _listener = new TcpListener(IPAddress.Parse(ipAddress), port);
+        _isRunning = false;
     }
 
-    public async Task Start()
+    public async Task StartAsync()
     {
-        _listener.Start();
+        if (_isRunning)
+            return;
 
-        var cancellationTokenSource = new CancellationTokenSource();
-        
-        while (true)
+        _isRunning = true;
+        _listener.Start();
+        Console.WriteLine("Server started on {0}. Waiting for connections...", _listener.LocalEndpoint);
+
+        while (_isRunning)
         {
-            var tcpClient = await _listener.AcceptTcpClientAsync();
-            await this.HandleClient(tcpClient, cancellationTokenSource);
+            TcpClient client = await _listener.AcceptTcpClientAsync();
+            _ = HandleClientAsync(client);
         }
-                
     }
 
     public void Stop()
     {
+        _isRunning = false;
         _listener.Stop();
     }
 
-    private async Task HandleClient(TcpClient client, CancellationTokenSource cancellationTokenSource)
+    private async Task HandleClientAsync(TcpClient client)
     {
-        NetworkStream stream = client.GetStream();
-        byte[] buffer = new byte[1024];
-        int bytesRead;
-        
-        while (!cancellationTokenSource.IsCancellationRequested)
+        try
         {
-            bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length);
-            string message = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-            Console.WriteLine($"Server received message: \"{message}\"");
+            NetworkStream stream = client.GetStream();
 
-            TrafficLightMessage? trafficLightMessage = null;
-            
-            try
-            {
-                trafficLightMessage = JsonConvert.DeserializeObject<TrafficLightMessage>(message);
-            }
-            catch (Exception e)
-            {
-                
-                // Handle JSON deserialization error
-                Console.WriteLine($"Error deserializing JSON message: {e.Message}");
+            byte[] buffer = new byte[1024];
+            StringBuilder sb = new StringBuilder();
+            int bytesRead;
 
-                // Send an error response back to the client
-                string errorResponse = "{\"error\": \"Invalid JSON message format\"}";
-                byte[] errorResponseBytes = Encoding.UTF8.GetBytes(errorResponse);
-                await stream.WriteAsync(errorResponseBytes, 0, errorResponseBytes.Length);
-            }
-            
-            if (trafficLightMessage.HasPriorityVehicle)
+            while ((bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length)) > 0)
             {
-                _trafficLight.Green();
-                string response = JsonConvert.SerializeObject(_trafficLight);
-                await stream.WriteAsync(Encoding.UTF8.GetBytes(response));
-                Console.WriteLine($"Server sent response: \"{response}\"");
-            }
-            else if (trafficLightMessage.HasCarWaiting)
-            {
-                hasCarWaiting = true;
-            }
-            if (hasCarWaiting && !_trafficLight.IsGreen())
-            {
-                _trafficLight.Green();
-                string response = JsonConvert.SerializeObject(_trafficLight);
-                Console.WriteLine($"Server sent response: \"{response}\"");
-                await stream.WriteAsync(Encoding.UTF8.GetBytes(response));
-                hasCarWaiting = false;
-                
-                await Task.Delay(5000);
+                string message = Encoding.ASCII.GetString(buffer, 0, bytesRead);
 
-                _trafficLight.Orange();
-                response = JsonConvert.SerializeObject(_trafficLight);
-                Console.WriteLine($"Server sent response: \"{response}\"");
-                await stream.WriteAsync(Encoding.UTF8.GetBytes(response));
-                
-                await Task.Delay(2000);
-                _trafficLight.Red();
-                response = JsonConvert.SerializeObject(_trafficLight);
-                Console.WriteLine($"Server sent response: \"{response}\"");
-                await stream.WriteAsync(Encoding.UTF8.GetBytes(response));
+                using (StringReader stringReader = new StringReader(message))
+                using (JsonTextReader jsonReader = new JsonTextReader(stringReader))
+                {
+                    JsonSerializer serializer = new JsonSerializer();
+
+                    while (jsonReader.Read())
+                    {
+                        if (jsonReader.TokenType == JsonToken.StartObject)
+                        {
+                            TrafficLightMessage msg = serializer.Deserialize<TrafficLightMessage>(jsonReader);
+                            Console.WriteLine($"Received update: HasCarWaiting={msg.HasCarWaiting}, HasPriorityVehicle={msg.HasPriorityVehicle}");
+
+                            // Handle the update (e.g., save to object)
+                            HandleUpdate(msg);
+                        }
+                    }
+                }
             }
+
+            client.Close();
         }
-
-        client.Close();
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error: {ex.Message}");
+        }
     }
 
+    private void HandleUpdate(TrafficLightMessage update)
+    {
+        Console.WriteLine("handling update...");
+    }
 }
