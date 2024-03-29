@@ -1,6 +1,7 @@
 namespace StoplichtController.Crossing.Lanes;
 
-public interface IHasPath
+public interface IHasPath : ICanIntersect
 {
     Path Path { get; }
+    
 }

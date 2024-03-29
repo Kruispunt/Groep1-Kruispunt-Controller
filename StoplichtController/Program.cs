@@ -1,13 +1,15 @@
 using System.Net;
 using Newtonsoft.Json;
+using StoplichtController.Crossing;
 using StoplichtController.Crossing.Builder;
 using StoplichtController.Messages;
 using StoplichtController.TcpServer;
 
-CrossingBuilder builder = new CrossingBuilder();
-builder
+CrossingManagerBuilder builder = new ();
+builder.AddCrossing(1);
+CrossingManager crossingManager = builder.Build();
 
-TcpServer server = new TcpServer("127.0.0.1", 51111,);
+TcpServer server = new TcpServer("127.0.0.1", 51111, crossingManager);
 
 
 

@@ -1,4 +1,4 @@
-namespace StoplichtController.Crossing.Lanes;
+namespace StoplichtController.Crossing.Lanes.Implementations;
 
 public class CarLane : Lane, IHasPath
 {
@@ -12,4 +12,13 @@ public class CarLane : Lane, IHasPath
     }
 
     public Path Path { get; }
+    public bool IntersectsWith(char roadId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public bool IntersectsWith(Lane lane)
+    {
+        throw new NotImplementedException();
+    }
 }

@@ -21,6 +21,8 @@ public class TcpServer
         _listener = new TcpListener(IPAddress.Parse(ipAddress), port);
         _isRunning = false;
         _trafficLightController = new TrafficLightController(crossingManager);
+        
+        Console.WriteLine(crossingManager);
     }
 
     public async Task StartAsync()

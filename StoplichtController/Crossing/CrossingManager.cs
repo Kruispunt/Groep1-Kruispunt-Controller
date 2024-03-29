@@ -2,7 +2,7 @@ namespace StoplichtController.Crossing;
 
 public class CrossingManager
 {
-    private Dictionary<int, Crossing> _crossings = new Dictionary<int, Crossing>();
+    private Dictionary<int, Crossing> _crossings = new ();
 
     public void AddCrossing(int id, Crossing crossing)
     {

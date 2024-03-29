@@ -1,6 +1,6 @@
 namespace StoplichtController.Crossing.Lanes;
 
-public interface ICrossesRoad
+public interface ICrossesRoad : ICanIntersect
 {
     char CrossesRoad { get; }
 }

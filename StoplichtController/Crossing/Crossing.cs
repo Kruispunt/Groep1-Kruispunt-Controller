@@ -1,7 +1,13 @@
+using System.Text.Json.Nodes;
+
 namespace StoplichtController.Crossing;
 
-public class Crossing(int id)
+public class Crossing()
 {
-    private int Id { get; set; }
     public List<Road> Roads { get; set; }
+
+    public JsonObject GetStatusMessage()
+    {
+        throw new NotImplementedException();
+    }
 }
