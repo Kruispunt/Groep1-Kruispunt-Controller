@@ -4,35 +4,33 @@ using StoplichtController.Messages;
 namespace StoplichtController.Models;
 
 [Serializable]
-public class CarLight
+public class Light
 {
-    public LightState state { get; private set; }
-    private bool hasWaitingVehicle = false;
-    private bool hasWaitingPriorityVehicle = false;
+    public LightState State { get; private set; }
     
-    public CarLight()
+    public Light()
     {
-        state = LightState.Red;
+        State = LightState.Red;
     }
     
     public void Green()
     {
-        state = LightState.Green;
+        State = LightState.Green;
     }
     
     public void Orange()
     {
-        state = LightState.Orange;
+        State = LightState.Orange;
     }
     
     public void Red()
     {
-        state = LightState.Red;
+        State = LightState.Red;
     }
     
     public bool IsGreen()
     {
-        if (state == LightState.Green)
+        if (State == LightState.Green)
         {
             return true;
         }

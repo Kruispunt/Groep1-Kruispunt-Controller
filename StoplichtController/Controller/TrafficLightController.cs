@@ -1,25 +1,28 @@
 using StoplichtController.Messages;
 using StoplichtController.Models;
 using StoplichtController.Updates;
+using StoplichtController.Crossing;
 
 namespace StoplichtController.Controller;
 
 public class TrafficLightController
 {
-        private Dictionary<Type, IHandleTrafficLightUpdate> strategies;
+    private CrossingManager _crossingManager;
 
-        public TrafficLightController()
+        public TrafficLightController(CrossingManager cm)
         {
-            strategies = new Dictionary<Type, IHandleTrafficLightUpdate>
-            {
-                { typeof(CarMessage), new HandleCarUpdate() },
-                { typeof(PedestrianMessage), new HandlePedestrianUpdate() }
-     
-            };
+            _crossingManager = cm;
         }
-        
+
+        private readonly Dictionary<Type, IHandleTrafficLightUpdate> _strategies = new()
+        {
+            { typeof(CarMessage), new HandleCarUpdate() },
+            { typeof(PedestrianMessage), new HandlePedestrianUpdate() }
+     
+        };
+
         public void HandleUpdate(Message message)
         {
-            strategies[message.GetType()].HandleUpdate(message);
+            _strategies[message.GetType()].HandleUpdate(message);
         }
 }

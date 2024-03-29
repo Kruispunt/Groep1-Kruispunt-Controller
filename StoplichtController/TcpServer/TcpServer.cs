@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using StoplichtController.Controller;
+using StoplichtController.Crossing;
 using StoplichtController.Messages;
 
 namespace StoplichtController.TcpServer;
@@ -13,12 +14,13 @@ public class TcpServer
 {
     private TcpListener _listener;
     private bool _isRunning;
-    private TrafficLightController _trafficLightController = new ();
+    private TrafficLightController _trafficLightController;
 
-    public TcpServer(string ipAddress, int port)
+    public TcpServer(string ipAddress, int port, CrossingManager crossingManager)
     {
         _listener = new TcpListener(IPAddress.Parse(ipAddress), port);
         _isRunning = false;
+        _trafficLightController = new TrafficLightController(crossingManager);
     }
 
     public async Task StartAsync()
