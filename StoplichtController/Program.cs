@@ -6,7 +6,12 @@ using StoplichtController.Messages;
 using StoplichtController.TcpServer;
 
 CrossingManagerBuilder builder = new ();
-builder.AddCrossing(1);
+builder
+    .AddCrossing(1)
+    .AddRoad('A')
+    .AddRoad('B')
+    .AddRoad('C');
+
 CrossingManager crossingManager = builder.Build();
 
 TcpServer server = new TcpServer("127.0.0.1", 51111, crossingManager);

@@ -4,7 +4,22 @@ namespace StoplichtController.Crossing;
 
 public class Road
 {
-    public char Id { get; set; }
-    public List<Lane> Lanes { get; set; }
-    public Direction Direction { get; set; }
+    private char Id { get; set; }
+    private Dictionary<int, Lane> Lanes { get; set; }
+    
+    public Road(char id)
+    {
+        Id = id;
+        Lanes = new Dictionary<int, Lane>();
+    }
+    
+    public void AddLane(Lane lane)
+    {
+        Lanes.Add(lane.GetId(), lane);
+    }
+    
+    public char GetId()
+    {
+        return Id;
+    }
 }

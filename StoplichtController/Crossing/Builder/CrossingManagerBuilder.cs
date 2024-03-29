@@ -6,12 +6,11 @@ public class CrossingManagerBuilder : ICrossingBuilder
 {
     private CrossingManager _crossingManager = new CrossingManager();
     private Crossing _lastCreatedCrossing;
-    private Road _lastCreatedRoad;
-    private Lane _lastCreatedLane;
+    private Road _lastCreatedRoad = null!;
 
     public ICrossingBuilder AddCrossing(int crossingId)
     {
-        Crossing crossing = new Crossing();
+        Crossing crossing = new Crossing(crossingId);
         _crossingManager.AddCrossing(crossingId, crossing);
         _lastCreatedCrossing = crossing;
         return this;
@@ -19,12 +18,28 @@ public class CrossingManagerBuilder : ICrossingBuilder
 
     public ICrossingBuilder AddRoad(char roadId)
     {
-        throw new NotImplementedException();
+        if (_lastCreatedCrossing != null)
+        {
+            Road road = new Road(roadId);
+            _crossingManager
+                .GetCrossing(_lastCreatedCrossing.Id)
+                .AddRoad(roadId);
+            _lastCreatedRoad = road;
+            return this;
+        }
+
+        throw new InvalidOperationException("No crossing created yet");
     }
 
     public ICrossingBuilder AddLane(Lane lane)
     {
-        throw new NotImplementedException();
+        if (_lastCreatedRoad != null)
+        {
+            _crossingManager.GetCrossing(_lastCreatedCrossing.Id).GetRoad(_lastCreatedRoad.GetId()).AddLane(lane);
+            return this;
+        }
+
+        throw new InvalidOperationException("No road created yet");
     }
 
     public CrossingManager Build()

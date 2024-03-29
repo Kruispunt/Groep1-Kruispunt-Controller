@@ -16,4 +16,9 @@ public abstract class Lane
             throw new InvalidOperationException("Lane must implement either ICrossesRoad or IHasPath interface");
         }
     }
+    
+    public int GetId()
+    {
+        return Id;
+    }
 }
