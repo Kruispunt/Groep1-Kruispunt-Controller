@@ -5,9 +5,12 @@ namespace StoplichtController.Messages;
 
 public class CarMessage : Message
 {
-    [JsonProperty("HasCarWaiting")]
-    public bool HasCarWaiting { get; set; }
+    [JsonProperty("DetectNear")]
+    public bool DetectNear { get; set; }
     
-    [JsonProperty("HasPriorityVehicle")]
+    [JsonProperty("DetectFar")]
+    public bool DetectFar { get; set; }
+    
+    [JsonProperty("PrioCar")]
     public bool HasPriorityVehicle { get; set; }
 }
