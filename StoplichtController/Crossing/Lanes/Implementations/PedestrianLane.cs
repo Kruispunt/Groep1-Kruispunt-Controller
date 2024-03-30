@@ -2,8 +2,9 @@ namespace StoplichtController.Crossing.Lanes.Implementations;
 
 public class PedestrianLane : Lane, ICrossesRoad
 {
-    public PedestrianLane(int id) : base(id)
+    public PedestrianLane(char crossesRoad) : base()
     {
+        
     }
 
     public bool IntersectsWith(char roadId)

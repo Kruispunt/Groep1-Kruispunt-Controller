@@ -18,6 +18,7 @@ public class CrossingManagerBuilder : ICrossingBuilder
 
     public ICrossingBuilder AddRoad(char roadId)
     {
+        roadId = char.ToUpper(roadId);
         if (_lastCreatedCrossing != null)
         {
             Road road = new Road(roadId);

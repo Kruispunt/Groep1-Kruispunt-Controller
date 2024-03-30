@@ -15,7 +15,7 @@ public class Road
     
     public void AddLane(Lane lane)
     {
-        Lanes.Add(lane.GetId(), lane);
+        Lanes.Add(Lanes.Count, lane);
     }
     
     public char GetId()

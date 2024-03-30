@@ -2,7 +2,7 @@ namespace StoplichtController.Crossing.Lanes.Implementations;
 
 public class BikeLane : Lane, ICrossesRoad
 {
-    public BikeLane(int id, char crossesRoadId) : base(id)
+    public BikeLane(char crossesRoadId) : base()
     {
     }
 

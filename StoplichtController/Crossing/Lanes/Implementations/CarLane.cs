@@ -5,13 +5,14 @@ public class CarLane : Lane, IHasPath
     public bool DetectNear { get; set; }
     public bool DetectFar { get; set; }
     public bool PrioCar { get; set; }
+    public Path Path { get; }
 
-    public CarLane(int id, char from, char to) : base(id)
+    public CarLane(char from, char to) : base()
     {
         Path = new Path(from, to);
     }
 
-    public Path Path { get; }
+
     public bool IntersectsWith(char roadId)
     {
         throw new NotImplementedException();

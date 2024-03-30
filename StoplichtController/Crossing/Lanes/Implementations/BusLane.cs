@@ -4,8 +4,9 @@ public class BusLane : Lane, IHasPath
 {
     int BusNumber { get; set; }
 
-    public BusLane(int id) : base(id)
+    public BusLane(int busNumber) : base()
     {
+        BusNumber = busNumber;
     }
 
     public Path Path { get; }
