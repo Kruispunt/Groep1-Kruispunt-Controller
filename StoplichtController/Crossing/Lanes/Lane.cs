@@ -2,9 +2,9 @@ using StoplichtController.Models;
 
 namespace StoplichtController.Crossing.Lanes;
 
+[Serializable]
 public abstract class Lane
 {
-
     Light Light { get; set; }
     
     public Lane()

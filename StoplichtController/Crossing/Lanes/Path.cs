@@ -2,10 +2,10 @@ namespace StoplichtController.Crossing.Lanes;
 
 public class Path
 {
-    private char From { get; set; }
-    private char To { get; set; }
+    private string From { get; set; }
+    private string To { get; set; }
 
-    public Path(char from, char to)
+    public Path(string from, string to)
     {
         if (from == to)
         {

@@ -1,19 +1,24 @@
+using Newtonsoft.Json;
+
 namespace StoplichtController.Crossing.Lanes.Implementations;
 
 public class CarLane : Lane, IHasPath
 {
+    [JsonProperty("DetectNear")]
     public bool DetectNear { get; set; }
+    [JsonProperty("DetectFar")]
     public bool DetectFar { get; set; }
+    [JsonProperty("PrioCar")]
     public bool PrioCar { get; set; }
     public Path Path { get; }
 
-    public CarLane(char from, char to) : base()
+    public CarLane(string from, string to) : base()
     {
         Path = new Path(from, to);
     }
 
 
-    public bool IntersectsWith(char roadId)
+    public bool IntersectsWith(string roadId)
     {
         throw new NotImplementedException();
     }

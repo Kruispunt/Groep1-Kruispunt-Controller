@@ -9,15 +9,15 @@ using StoplichtController.TcpServer;
 CrossingManagerBuilder builder = new ();
 builder
     .AddCrossing(1)
-    .AddRoad('A')
-    .AddLane(new CarLane('A', 'B'))
-    .AddLane(new CarLane('A', 'C'))
-    .AddRoad('B')
-    .AddLane(new CarLane('B', 'A'))
-    .AddLane(new CarLane('B', 'C'))
-    .AddRoad('C')
-    .AddLane(new CarLane('C', 'A'))
-    .AddLane(new CarLane('C', 'B'));
+    .AddRoad("A")
+    .AddLane(new CarLane("A", "B"))
+    .AddLane(new CarLane("A", "C"))
+    .AddRoad("B")
+    .AddLane(new CarLane("B", "A"))
+    .AddLane(new CarLane("B", "C"))
+    .AddRoad("C")
+    .AddLane(new CarLane("C", "A"))
+    .AddLane(new CarLane("C", "B"));
 
 CrossingManager crossingManager = builder.Build();
 

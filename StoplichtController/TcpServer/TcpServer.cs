@@ -53,7 +53,7 @@ public class TcpServer
         {
             NetworkStream stream = client.GetStream();
 
-            byte[] buffer = new byte[1024];
+            byte[] buffer = new byte[5000];
             StringBuilder sb = new StringBuilder();
             int bytesRead;
 
@@ -64,18 +64,15 @@ public class TcpServer
                 using (StringReader stringReader = new StringReader(message))
                 using (JsonTextReader jsonReader = new JsonTextReader(stringReader))
                 {
-                    MessageFactory factory = new MessageFactory();
-                    factory.Register("CarMessage", () => new CarMessage());
-                    factory.Register("PedestrianMessage", () => new PedestrianMessage());
                     
                     JsonSerializer serializer = new JsonSerializer();
-                    serializer.Converters.Add(new MessageJsonConverter(factory));
+                    serializer.Converters.Add(new MessageJsonConverter());
 
                     while (jsonReader.Read())
                     {
                         if (jsonReader.TokenType == JsonToken.StartObject)
                         {
-                            Message msg = serializer.Deserialize<Message>(jsonReader);
+                            CrossingMessage msg = serializer.Deserialize<CrossingMessage>(jsonReader);
                             _trafficLightController.HandleUpdate(msg);
                         }
                     }

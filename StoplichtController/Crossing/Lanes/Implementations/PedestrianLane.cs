@@ -1,13 +1,17 @@
+using Newtonsoft.Json;
+
 namespace StoplichtController.Crossing.Lanes.Implementations;
 
 public class PedestrianLane : Lane, ICrossesRoad
 {
-    public PedestrianLane(char crossesRoad) : base()
+    [JsonProperty("DetectPedestrian")]
+    public bool PedestrianDetected { get; set; }
+    public PedestrianLane(string crossesRoad) : base()
     {
         
     }
 
-    public bool IntersectsWith(char roadId)
+    public bool IntersectsWith(string roadId)
     {
         throw new NotImplementedException();
     }
@@ -17,5 +21,5 @@ public class PedestrianLane : Lane, ICrossesRoad
         throw new NotImplementedException();
     }
 
-    public char CrossesRoad { get; }
+    public string CrossesRoad { get; }
 }

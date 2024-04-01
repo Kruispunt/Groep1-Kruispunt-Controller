@@ -13,16 +13,10 @@ public class TrafficLightController
         {
             _crossingManager = cm;
         }
+        
 
-        private readonly Dictionary<Type, IHandleTrafficLightUpdate> _strategies = new()
+        public void HandleUpdate(CrossingMessage simToControllerMessage)
         {
-            { typeof(CarMessage), new HandleCarUpdate() },
-            { typeof(PedestrianMessage), new HandlePedestrianUpdate() }
-     
-        };
-
-        public void HandleUpdate(Message message)
-        {
-            _strategies[message.GetType()].HandleUpdate(message);
+            // Todo
         }
 }

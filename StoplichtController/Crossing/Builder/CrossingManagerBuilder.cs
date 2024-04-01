@@ -16,9 +16,9 @@ public class CrossingManagerBuilder : ICrossingBuilder
         return this;
     }
 
-    public ICrossingBuilder AddRoad(char roadId)
+    public ICrossingBuilder AddRoad(string roadId)
     {
-        roadId = char.ToUpper(roadId);
+        roadId = roadId.ToUpper();
         if (_lastCreatedCrossing != null)
         {
             Road road = new Road(roadId);
