@@ -8,15 +8,25 @@ namespace StoplichtController.Controller;
 public class TrafficLightController
 {
     private CrossingManager _crossingManager;
+    private bool _isRunning = false;
 
         public TrafficLightController(CrossingManager cm)
         {
             _crossingManager = cm;
         }
         
-
-        public void HandleUpdate(CrossingMessage simToControllerMessage)
+        private void StartManaging()
         {
-            // Todo
+            _isRunning = true;
+            while (_isRunning)
+            {
+                // Todo
+            }
+        }
+
+        public void HandleUpdate(CrossingMessage crossingMessage)
+        {
+            var crossing = _crossingManager.GetCrossing(crossingMessage.CrossingId);
+            crossing.UpdateCrossing(crossingMessage);
         }
 }

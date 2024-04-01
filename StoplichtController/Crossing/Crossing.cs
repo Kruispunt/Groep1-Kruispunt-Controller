@@ -1,5 +1,6 @@
 using System.Text.Json.Nodes;
 using Newtonsoft.Json;
+using StoplichtController.Messages;
 
 namespace StoplichtController.Crossing;
 
@@ -29,5 +30,10 @@ public class Crossing
     public JsonObject GetStatusMessage()
     {
         throw new NotImplementedException();
+    }
+    
+    public void UpdateCrossing(CrossingMessage update)
+    {
+        // Todo
     }
 }

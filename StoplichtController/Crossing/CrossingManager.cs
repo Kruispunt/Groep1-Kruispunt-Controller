@@ -1,3 +1,5 @@
+using StoplichtController.Messages;
+
 namespace StoplichtController.Crossing;
 
 public class CrossingManager
