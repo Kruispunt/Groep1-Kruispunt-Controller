@@ -5,31 +5,36 @@ using StoplichtController.Crossing.Lanes.Implementations;
 
 namespace StoplichtController.Messages;
 
-[Serializable]
-public class CrossingMessage
+public partial class CrossingMessage
 {
-    [JsonProperty]
-    public Dictionary<string, CrossingMessage> Crossing { get; set; }
+    [JsonProperty("1")]
+    public RoadsMessage RoadsMessage { get; set; }
 }
 
-[Serializable]
-public class RoadMessage
+public partial class RoadsMessage
 {
-    public Dictionary<string, LaneMessage> Roads { get; set; }
+    [JsonProperty("A")]
+    public RoadMessage A { get; set; }
+    
+    [JsonProperty("B")]
+    public RoadMessage B { get; set; }
+    
+    [JsonProperty("C")]
+    public RoadMessage C { get; set; }
 }
 
-[Serializable]
-public class LaneMessage
+public partial class RoadMessage
 {
-    [JsonProperty("Cars")]
-    public List<CarLane> CarLanes { get; set; }
-    
-    [JsonProperty("Pedestrians")]
-    public List<PedestrianLane> PedestrianLanes { get; set; }
-    
-    [JsonProperty("Cyclists")]
-    public List<BikeLane> BikeLanes { get; set; }
-    
-    [JsonProperty("Busses")]
-    public List<BusLane> BusLanes { get; set; }
+    [JsonProperty("cars")]
+    public LaneMessage[] Lanes { get; set; }
+}
+
+
+
+[JsonObject]
+public partial class LaneMessage
+{
+    public bool DetectNear { get; set; }
+    public bool DetectFar { get; set; }
+    public bool PrioCar { get; set; }
 }

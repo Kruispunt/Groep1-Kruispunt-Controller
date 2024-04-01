@@ -15,8 +15,7 @@ public class MessageJsonConverter : JsonConverter
     {
         JObject jObject = JObject.Load(reader);
 
-        CrossingMessage message = new CrossingMessage();
-        message.Crossing.Add(jObject.Next.ToString());
+        CrossingMessage message = jObject.ToObject<CrossingMessage>();
      
         
         return message;

@@ -1,0 +1,76 @@
+{
+  "1": {
+    "A": {
+      "Cars": [
+        {
+          "DetectNear": false,
+          "DetectFar": false,
+          "PrioCar": false
+        },
+        {
+          "DetectNear": false,
+          "DetectFar": false,
+          "PrioCar": false
+        },
+        {
+          "DetectNear": false,
+          "DetectFar": false,
+          "PrioCar": false
+        },
+        {
+          "DetectNear": false,
+          "DetectFar": false,
+          "PrioCar": false
+        }
+      ]
+    },
+    "B": {
+      "Cars": [
+        {
+          "DetectNear": false,
+          "DetectFar": false,
+          "PrioCar": false
+        },
+        {
+          "DetectNear": false,
+          "DetectFar": false,
+          "PrioCar": false
+        },
+        {
+          "DetectNear": false,
+          "DetectFar": false,
+          "PrioCar": false
+        },
+        {
+          "DetectNear": false,
+          "DetectFar": false,
+          "PrioCar": false
+        }
+      ]
+    },
+    "C": {
+      "Cars": [
+        {
+          "DetectNear": false,
+          "DetectFar": false,
+          "PrioCar": false
+        },
+        {
+          "DetectNear": false,
+          "DetectFar": false,
+          "PrioCar": false
+        },
+        {
+          "DetectNear": false,
+          "DetectFar": false,
+          "PrioCar": false
+        },
+        {
+          "DetectNear": false,
+          "DetectFar": false,
+          "PrioCar": false
+        }
+      ]
+    }
+  }
+}

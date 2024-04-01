@@ -1,8 +1,7 @@
 {
   "Crossing": {
     "CrossingId": 1,
-    "Roads": [
-      "A" {
+      "A": {
         "Cars": [
           {
             "DetectNear": false,
@@ -127,6 +126,5 @@
           }
         ]
       }
-    ]
   }
 }
