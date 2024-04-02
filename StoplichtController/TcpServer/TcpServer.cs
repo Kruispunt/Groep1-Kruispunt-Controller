@@ -85,6 +85,7 @@ public class TcpServer
             
                     byte[] responseBuffer = Encoding.UTF8.GetBytes(response);
                     stream.WriteAsync(responseBuffer, 0, responseBuffer.Length);
+                    Console.WriteLine("Sent response:\n{0}", response);
                 }
             }
 
