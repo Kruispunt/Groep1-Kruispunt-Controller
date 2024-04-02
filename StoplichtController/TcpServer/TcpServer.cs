@@ -15,6 +15,7 @@ public class TcpServer
     private TcpListener _listener;
     private bool _isRunning;
     private TrafficLightController _trafficLightController;
+    private bool update = false;
 
     public TcpServer(string ipAddress, int port, CrossingManager crossingManager)
     {
@@ -59,7 +60,9 @@ public class TcpServer
 
             while ((bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length)) > 0)
             {
-                string message = Encoding.ASCII.GetString(buffer, 0, bytesRead);
+                string message = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+                
+                Console.WriteLine("We got:\n{0}", message);
 
                 using (StringReader stringReader = new StringReader(message))
                 using (JsonTextReader jsonReader = new JsonTextReader(stringReader))
@@ -74,10 +77,17 @@ public class TcpServer
                         {
                             CrossingMessage msg = serializer.Deserialize<CrossingMessage>(jsonReader);
                             _trafficLightController.HandleUpdate(msg);
+                            
                         }
                     }
+                    
+                    string response = GetResponse();
+            
+                    byte[] responseBuffer = Encoding.UTF8.GetBytes(response);
+                    stream.WriteAsync(responseBuffer, 0, responseBuffer.Length);
                 }
             }
+
 
             client.Close();
         }
@@ -85,5 +95,10 @@ public class TcpServer
         {
             Console.WriteLine($"Error: {ex.Message}");
         }
+    }
+    
+    private string GetResponse(int crossingId = 1)
+    {
+        return _trafficLightController.GetStatusMessage(crossingId);
     }
 }

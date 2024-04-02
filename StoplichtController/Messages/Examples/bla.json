@@ -1,0 +1,12 @@
+{
+  "crossroad": 1,
+  "road": "A",
+  "Cars":
+  [1, 2, 1, 0],
+  "Cyclists":
+  [0],
+  "Pedestrians":
+  [0, 1],
+  "Busses":
+  []
+}

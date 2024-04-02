@@ -29,4 +29,11 @@ public class TrafficLightController
             var crossing = _crossingManager.GetCrossing(crossingMessage.CrossingId);
             crossing.UpdateCrossing(crossingMessage);
         }
+
+        public string GetStatusMessage(int crossingId)
+        {
+            string path = "/Users/svenimholz/dev/Kruispunt/StoplichtController/StoplichtController/Messages/Examples/ControllerToSim.json"; // Replace with the actual path to the file
+            string content = File.ReadAllText(path);
+            return content;
+        }
 }
