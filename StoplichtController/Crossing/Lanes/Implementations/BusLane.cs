@@ -1,4 +1,5 @@
 using Newtonsoft.Json;
+using StoplichtController.Messages;
 
 namespace StoplichtController.Crossing.Lanes.Implementations;
 
@@ -19,6 +20,11 @@ public class BusLane : Lane, IHasPath
     }
 
     public bool IntersectsWith(Lane lane)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override bool Update(ILaneMessage message)
     {
         throw new NotImplementedException();
     }

@@ -28,13 +28,20 @@ public partial class RoadsMessage
 public partial class RoadMessage
 {
     [JsonProperty("cars")]
-    public LaneMessage[] Lanes { get; set; }
+    public CarLaneMessage[] Lanes { get; set; }
+    
+    public ILaneMessage getLaneMessage(int laneId)
+    {
+        return Lanes[laneId];
+    }
 }
 
 [JsonObject]
-public partial class LaneMessage
+public partial class CarLaneMessage : ILaneMessage
 {
     public bool DetectNear { get; set; }
     public bool DetectFar { get; set; }
     public bool PrioCar { get; set; }
 }
+
+public interface ILaneMessage{}

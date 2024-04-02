@@ -1,9 +1,10 @@
+using StoplichtController.Messages;
 using StoplichtController.Models;
 
 namespace StoplichtController.Crossing.Lanes;
 
 [Serializable]
-public abstract class Lane
+public abstract class Lane : IUpdateableLane
 {
     Light Light { get; set; }
     
@@ -15,4 +16,6 @@ public abstract class Lane
             throw new InvalidOperationException("Lane must implement either ICrossesRoad or IHasPath interface");
         }
     }
+
+    public abstract bool Update(ILaneMessage message);
 }

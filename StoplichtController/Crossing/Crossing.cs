@@ -31,9 +31,34 @@ public class Crossing
     {
         throw new NotImplementedException();
     }
-    
+
     public void UpdateCrossing(CrossingMessage update)
     {
-        // Todo
+        if (Roads.TryGetValue("A", out var roadA))
+        {
+            var lanes = roadA.GetLanes();
+            foreach (var lane in lanes)
+            {
+                lane.Value.Update(update.RoadsMessage.A.getLaneMessage(lane.Key));
+            }
+        }
+
+        if (Roads.TryGetValue("B", out var roadB))
+        {
+            var lanes = roadB.GetLanes();
+            foreach (var lane in lanes)
+            {
+                lane.Value.Update(update.RoadsMessage.B.getLaneMessage(lane.Key));
+            }
+        }
+
+        if (Roads.TryGetValue("C", out var roadC))
+        {
+            var lanes = roadC.GetLanes();
+            foreach (var lane in lanes)
+            {
+                lane.Value.Update(update.RoadsMessage.C.getLaneMessage(lane.Key));
+            }
+        }
     }
 }

@@ -18,6 +18,11 @@ public class Road
         Lanes.Add(Lanes.Count, lane);
     }
     
+    public Dictionary<int, Lane> GetLanes()
+    {
+        return Lanes;
+    }
+    
     public string GetId()
     {
         return Id;

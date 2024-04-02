@@ -1,4 +1,5 @@
 using Newtonsoft.Json;
+using StoplichtController.Messages;
 
 namespace StoplichtController.Crossing.Lanes.Implementations;
 
@@ -22,4 +23,8 @@ public class PedestrianLane : Lane, ICrossesRoad
     }
 
     public string CrossesRoad { get; }
+    public override bool Update(ILaneMessage message)
+    {
+        throw new NotImplementedException();
+    }
 }
