@@ -1,43 +1,32 @@
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using StoplichtController.Crossing;
-using StoplichtController.Crossing.Lanes.Implementations;
 
 namespace StoplichtController.Messages;
 
-public partial class CrossingMessage
+public class CrossingMessage : Dictionary<int, RoadDictionary>
 {
-    [JsonProperty("1")] // I don't like this but it's needed for the current json structure
-    public RoadsMessage RoadsMessage { get; set; }
-
-    public int CrossingId = 1; // I don't like this but it's needed for the current json structure
 }
 
-public partial class RoadsMessage
+public abstract class RoadDictionary : Dictionary<string, RoadMessage>
 {
-    [JsonProperty("A")] // I don't like this but it's needed for the current json structure
-    public RoadMessage A { get; set; }
-    
-    [JsonProperty("B")] // I don't like this but it's needed for the current json structure
-    public RoadMessage B { get; set; }
-    
-    [JsonProperty("C")] // I don't like this but it's needed for the current json structure
-    public RoadMessage C { get; set; }
 }
 
-public partial class RoadMessage
+public class RoadMessage
 {
     [JsonProperty("cars")]
-    public CarLaneMessage[] Lanes { get; set; }
+    public CarLaneMessage[]? Lanes { get; set; }
     
-    public ILaneMessage getLaneMessage(int laneId)
-    {
-        return Lanes[laneId];
-    }
+    [JsonProperty("cyclists")]
+    public BikeLaneMessage[]? BikeLanes { get; set; }
+    
+    [JsonProperty("pedestrians")]
+    public PedestrianLaneMessage[]? PedestrianLanes { get; set; }
+    
+    [JsonProperty("busses")]
+    public BusLaneMessage[]? BusLanes { get; set; }
 }
 
 [JsonObject]
-public partial class CarLaneMessage : ILaneMessage
+public class CarLaneMessage : ILaneMessage
 {
     public bool DetectNear { get; set; }
     public bool DetectFar { get; set; }
@@ -45,3 +34,21 @@ public partial class CarLaneMessage : ILaneMessage
 }
 
 public interface ILaneMessage{}
+
+[JsonObject]
+public class BikeLaneMessage : ILaneMessage
+{
+    //todo
+}
+
+[JsonObject]
+public class PedestrianLaneMessage : ILaneMessage
+{
+    //todo
+}
+
+[JsonObject]
+public class BusLaneMessage : ILaneMessage
+{
+    public int[]? BusNumbers { get; set; }
+}

@@ -22,7 +22,7 @@ public class TcpServer
         _listener = new TcpListener(IPAddress.Any, port);
         _isRunning = false;
         _trafficLightController = new TrafficLightController(crossingManager);
-        
+
         Console.WriteLine(crossingManager);
     }
 
@@ -54,39 +54,23 @@ public class TcpServer
         {
             NetworkStream stream = client.GetStream();
 
-            byte[] buffer = new byte[5000];
+            byte[] buffer = new byte[1024];
             StringBuilder sb = new StringBuilder();
             int bytesRead;
 
             while ((bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length)) > 0)
             {
                 string message = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+
+                CrossingMessage crossingMessage = JsonConvert.DeserializeObject<CrossingMessage>(message) ??
+                                                  throw new InvalidOperationException();
+
+                _trafficLightController.HandleUpdate(crossingMessage);
                 
-                Console.WriteLine("We got:\n{0}", message);
+                string response = GetResponse();
 
-                using (StringReader stringReader = new StringReader(message))
-                using (JsonTextReader jsonReader = new JsonTextReader(stringReader))
-                {
-                    
-                    JsonSerializer serializer = new JsonSerializer();
-                    serializer.Converters.Add(new MessageJsonConverter());
-
-                    while (jsonReader.Read())
-                    {
-                        if (jsonReader.TokenType == JsonToken.StartObject)
-                        {
-                            CrossingMessage msg = serializer.Deserialize<CrossingMessage>(jsonReader);
-                            _trafficLightController.HandleUpdate(msg);
-                            
-                        }
-                    }
-                    
-                    string response = GetResponse();
-            
-                    byte[] responseBuffer = Encoding.UTF8.GetBytes(response);
-                    stream.WriteAsync(responseBuffer, 0, responseBuffer.Length);
-                    Console.WriteLine("Sent response:\n{0}", response);
-                }
+                byte[] responseBuffer = Encoding.UTF8.GetBytes(response);
+                await stream.WriteAsync(responseBuffer, 0, responseBuffer.Length);
             }
 
 
@@ -97,7 +81,7 @@ public class TcpServer
             Console.WriteLine($"Error: {ex.Message}");
         }
     }
-    
+
     private string GetResponse(int crossingId = 1)
     {
         return _trafficLightController.GetStatusMessage(crossingId);
