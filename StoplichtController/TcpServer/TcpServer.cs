@@ -17,9 +17,9 @@ public class TcpServer
     private TrafficLightController _trafficLightController;
     private bool update = false;
 
-    public TcpServer(string ipAddress, int port, CrossingManager crossingManager)
+    public TcpServer(int port, CrossingManager crossingManager)
     {
-        _listener = new TcpListener(IPAddress.Parse(ipAddress), port);
+        _listener = new TcpListener(IPAddress.Any, port);
         _isRunning = false;
         _trafficLightController = new TrafficLightController(crossingManager);
         
