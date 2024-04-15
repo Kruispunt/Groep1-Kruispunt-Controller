@@ -2,7 +2,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using StoplichtController.Messages;
 
-namespace StoplichtController.TcpServer;
+namespace StoplichtController.Server;
 
 public class MessageJsonConverter : JsonConverter
 {

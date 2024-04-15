@@ -1,7 +1,7 @@
+using StoplichtController.Controller;
 using StoplichtController.Crossing;
 using StoplichtController.Crossing.Builder;
 using StoplichtController.Crossing.Lanes.Implementations;
-using StoplichtController.TcpServer;
 
 CrossingManagerBuilder builder = new ();
 builder
@@ -40,18 +40,8 @@ builder
 
 CrossingManager crossingManager = builder.Build();
 
-TcpServer server = new TcpServer(8080, crossingManager);
+TrafficLightController controller = new (crossingManager);
+await controller.Start();
 
-
-
-        
-try
-{
-    await server.StartAsync();
-}
-catch (Exception ex)
-{
-    Console.WriteLine($"Error starting server: {ex.Message}");
-}
 
 
