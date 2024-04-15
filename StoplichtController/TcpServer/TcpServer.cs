@@ -54,13 +54,14 @@ public class TcpServer
         {
             NetworkStream stream = client.GetStream();
 
-            byte[] buffer = new byte[1024];
+            byte[] buffer = new byte[5000];
             StringBuilder sb = new StringBuilder();
             int bytesRead;
 
             while ((bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length)) > 0)
             {
                 string message = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+                Console.WriteLine(message);
 
                 CrossingMessage crossingMessage = JsonConvert.DeserializeObject<CrossingMessage>(message) ??
                                                   throw new InvalidOperationException();
@@ -71,6 +72,7 @@ public class TcpServer
 
                 byte[] responseBuffer = Encoding.UTF8.GetBytes(response);
                 await stream.WriteAsync(responseBuffer, 0, responseBuffer.Length);
+                Console.WriteLine(response);
             }
 
 
