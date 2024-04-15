@@ -6,7 +6,7 @@ public class CrossingMessage : Dictionary<int, RoadDictionary>
 {
 }
 
-public abstract class RoadDictionary : Dictionary<string, RoadMessage>
+public class RoadDictionary : Dictionary<string, RoadMessage>
 {
 }
 
@@ -22,7 +22,7 @@ public class RoadMessage
     public PedestrianLaneMessage[]? PedestrianLanes { get; set; }
     
     [JsonProperty("busses")]
-    public BusLaneMessage[]? BusLanes { get; set; }
+    public int[]? BusLanes { get; set; }
 }
 
 [JsonObject]
@@ -45,10 +45,4 @@ public class BikeLaneMessage : ILaneMessage
 public class PedestrianLaneMessage : ILaneMessage
 {
     //todo
-}
-
-[JsonObject]
-public class BusLaneMessage : ILaneMessage
-{
-    public int[]? BusNumbers { get; set; }
 }
