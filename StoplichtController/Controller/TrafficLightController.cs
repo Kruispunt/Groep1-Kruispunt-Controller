@@ -6,28 +6,23 @@ namespace StoplichtController.Controller;
 
 public class TrafficLightController
 {
-    private CrossingManager _crossingManager;
-    private CancellationTokenSource _cancellationTokenSource;
+    private CrossingManager _cm;
+    private CancellationTokenSource _cancellationTokenSource = new();
     private TcpServer _server;
-    private Task _messageSendingTask;
 
     public TrafficLightController(CrossingManager cm)
     {
-        _cancellationTokenSource = new CancellationTokenSource();
-        _crossingManager = cm;
-        _server = new TcpServer(8080);
+        _cm = cm;
+        _server = new TcpServer(8080, this);
     }
-
-
 
     public async Task Start()
     {
-        _messageSendingTask = StartSendingMessagesAsync(_cancellationTokenSource.Token);
+        var messageSendingTask = StartSendingMessagesAsync(_cancellationTokenSource.Token);
+        var serverTask = _server.StartAsync(_cancellationTokenSource.Token);
 
-        await _server.StartAsync(_cancellationTokenSource.Token);
-
+        await Task.WhenAll(messageSendingTask, serverTask);
     }
-
 
 
     /// <summary>
@@ -36,25 +31,27 @@ public class TrafficLightController
     /// <param name="crossingMessage">It's a dictionary with only one key value pair</param>
     public void HandleUpdate(CrossingMessage crossingMessage)
     {
-        var crossingId = crossingMessage.Keys.First(); // There should only be one crossing in the message
-        var roads = crossingMessage[crossingId];
-        var crossing = _crossingManager.GetCrossing(crossingId);
+        foreach (var crossingId in crossingMessage.Keys)
+        {
+            var roads = crossingMessage[crossingId];
+            var crossing = _cm.GetCrossing(crossingId);
 
-        crossing.UpdateCrossing(roads);
+            crossing.UpdateCrossing(roads);
+        }
     }
 
     private async Task StartSendingMessagesAsync(CancellationToken token)
     {
         while (!token.IsCancellationRequested)
         {
-            var message = GetStatusMessage(); // Replace 1 with the actual crossingId
-            _server.SendMessageAsync(message);
-            await Task.Delay(1000); // Delay for 1 second
+            var message = GetStatusMessage();
+            _ = _server.SendMessageAsync(message);
+            await Task.Delay(3000);
         }
     }
 
 
-    public string GetStatusMessage()
+    private string GetStatusMessage()
     {
         string path =
             "/Users/svenimholz/dev/Kruispunt/StoplichtController/StoplichtController/Messages/Examples/ControllerToSim.json";
@@ -64,18 +61,10 @@ public class TrafficLightController
         return content;
     }
 
-    public async Task StopAsync()
+    public void Stop()
     {
         _cancellationTokenSource.Cancel();
-        try
-        {
-            await _messageSendingTask;
-            _server.Stop();
-        }
-        catch (TaskCanceledException)
-        {
-            // Ignore
-        }
+        _server.Stop();
         _cancellationTokenSource.Dispose();
     }
 }
