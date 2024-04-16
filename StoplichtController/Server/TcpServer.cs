@@ -1,7 +1,7 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using System.Text.Json;
+using StoplichtController.Controller;
 using StoplichtController.Messages;
 using Newtonsoft.Json;
 
@@ -11,10 +11,12 @@ public class TcpServer
 {
     private TcpListener _listener;
     private List<TcpClient> _clients = new List<TcpClient>();
+    private TrafficLightController _controller;
 
-    public TcpServer(int port)
+    public TcpServer(int port, TrafficLightController controller)
     {
         _listener = new TcpListener(IPAddress.Any, port);
+        _controller = controller;
     }
     
     public async Task StartAsync(CancellationToken token)
@@ -70,10 +72,7 @@ public class TcpServer
         {
             Console.WriteLine($"Error: {ex.Message}");
         }
-        finally
-        {
-            _clients.Remove(client);
-        }
+
     }
 
     private async Task<CrossingMessage> HandleMessageAsync(string message, NetworkStream stream, CancellationToken token)
