@@ -3,6 +3,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Text.Json;
 using StoplichtController.Messages;
+using Newtonsoft.Json;
 
 namespace StoplichtController.Server;
 
@@ -15,7 +16,7 @@ public class TcpServer
     {
         _listener = new TcpListener(IPAddress.Any, port);
     }
-
+    
     public async Task StartAsync(CancellationToken token)
     {
         _listener.Start();
@@ -54,7 +55,8 @@ public class TcpServer
                     string message = Encoding.UTF8.GetString(buffer, 0, bytesRead);
                     Console.WriteLine(message);
 
-                    await HandleMessageAsync(message, stream, token);
+                    CrossingMessage crossingMessage = await HandleMessageAsync(message, stream, token);
+                    _controller.HandleUpdate(crossingMessage);
                 }
             }
 
@@ -74,16 +76,12 @@ public class TcpServer
         }
     }
 
-    private async Task HandleMessageAsync(string message, NetworkStream stream, CancellationToken token)
+    private async Task<CrossingMessage> HandleMessageAsync(string message, NetworkStream stream, CancellationToken token)
     {
-        CrossingMessage crossingMessage = JsonSerializer.Deserialize<CrossingMessage>(message) ??
+        CrossingMessage crossingMessage = JsonConvert.DeserializeObject<CrossingMessage>(message) ??
                                           throw new InvalidOperationException();
 
-        string response = "OK";
-
-        byte[] responseBuffer = Encoding.UTF8.GetBytes(response);
-        await stream.WriteAsync(responseBuffer, 0, responseBuffer.Length, token);
-        Console.WriteLine(response);
+        return crossingMessage;
     }
 
     public async Task SendMessageAsync(string message)
