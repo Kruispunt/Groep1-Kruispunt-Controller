@@ -5,7 +5,7 @@ namespace StoplichtController.Crossing.Builder;
 public class CrossingManagerBuilder : ICrossingBuilder
 {
     private CrossingManager _crossingManager = new CrossingManager();
-    private Crossing _lastCreatedCrossing;
+    private Crossing? _lastCreatedCrossing;
     private Road _lastCreatedRoad = null!;
 
     public ICrossingBuilder AddCrossing(int crossingId)

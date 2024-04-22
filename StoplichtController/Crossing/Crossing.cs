@@ -30,10 +30,9 @@ public class Crossing
     {
         foreach (var road in Roads)
         {
-            foreach (var message in roadMessage)
+            if (roadMessage.TryGetValue(road.Key, out var message))
             {
-                road.Value.Update(message.Value);
-
+                road.Value.Update(message);
             }
         }
     }

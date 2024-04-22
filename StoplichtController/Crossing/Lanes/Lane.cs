@@ -8,11 +8,12 @@ public abstract class Lane
 {
     protected Light Light { get; set; }
     
-    private DateTime LastUpdated { get; set; }
-    
-    public Lane()
+    DateTime LastUpdated { get; set; }
+
+    protected Lane()
     {
         Light = new Light();
+        LastUpdated = DateTime.Today;
         if (!(this is ICrossesRoad) && !(this is IHasPath))
         {
             throw new InvalidOperationException("Lane must implement either ICrossesRoad or IHasPath interface");
@@ -30,7 +31,7 @@ public abstract class Lane
 
     private void UpdateTime()
     {
-        LastUpdated = DateTime.UtcNow;
+        LastUpdated = DateTime.Now;
     } 
 
 }

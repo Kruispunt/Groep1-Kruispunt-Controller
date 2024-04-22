@@ -17,7 +17,7 @@ public class CarLane : Lane, IHasPath
 
     public bool IntersectsWith(Lane lane) { throw new NotImplementedException(); }
 
-    public void Update(CarLaneMessage message)
+    void Update(CarLaneMessage message)
     {
         DetectNear = message.DetectNear;
         DetectFar = message.DetectFar;
