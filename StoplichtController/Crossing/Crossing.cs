@@ -35,11 +35,7 @@ public class Crossing
     {
         foreach (var road in roads)
         {
-            if (Roads.TryGetValue(road.Key, out var crossingRoad))
-            {
-                // TODO update road
-                Console.WriteLine(road.Key);
-            }
+            Roads[road.Key].Update();
         }
     }
 }

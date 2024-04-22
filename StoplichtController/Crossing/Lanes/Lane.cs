@@ -6,7 +6,9 @@ namespace StoplichtController.Crossing.Lanes;
 [Serializable]
 public abstract class Lane 
 {
-    Light Light { get; set; }
+    protected Light Light { get; set; }
+    
+    protected DateTime LastUpdated { get; set; }
     
     public Lane()
     {
@@ -16,5 +18,10 @@ public abstract class Lane
             throw new InvalidOperationException("Lane must implement either ICrossesRoad or IHasPath interface");
         }
     }
+
+    protected void UpdateTime()
+    {
+        LastUpdated = DateTime.UtcNow;
+    } 
 
 }

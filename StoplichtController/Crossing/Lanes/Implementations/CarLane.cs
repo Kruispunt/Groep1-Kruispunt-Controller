@@ -5,15 +5,9 @@ namespace StoplichtController.Crossing.Lanes.Implementations;
 
 public class CarLane : Lane, IHasPath
 {
-    [JsonProperty("DetectNear")]
     public bool DetectNear { get; set; }
-
-    [JsonProperty("DetectFar")]
     public bool DetectFar { get; set; }
-
-    [JsonProperty("PrioCar")]
     public bool PrioCar { get; set; }
-
     public Path Path { get; }
 
     public CarLane(string from, string to) : base() { Path = new Path(from, to); }
@@ -25,7 +19,8 @@ public class CarLane : Lane, IHasPath
 
     public bool Update(CarLaneMessage message)
     {
-
+        UpdateTime();
+        
         DetectNear = message.DetectNear;
         DetectFar = message.DetectFar;
         PrioCar = message.PrioCar;

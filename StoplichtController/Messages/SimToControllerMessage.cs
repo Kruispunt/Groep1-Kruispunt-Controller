@@ -22,11 +22,11 @@ public class RoadMessage
     public PedestrianLaneMessage[]? PedestrianLanes { get; set; }
     
     [JsonProperty("busses")]
-    public int[]? BusLanes { get; set; }
+    public BusLaneMessage? BusLanes { get; set; }
 }
 
 [JsonObject]
-public class CarLaneMessage 
+public class CarLaneMessage : IUpdateMessage
 {
     public bool DetectNear { get; set; }
     public bool DetectFar { get; set; }
@@ -34,13 +34,19 @@ public class CarLaneMessage
 }
 
 [JsonObject]
-public class BikeLaneMessage
+public class BikeLaneMessage: IUpdateMessage
 {
     public bool Detected { get; set; }
 }
 
 [JsonObject]
-public class PedestrianLaneMessage 
+public class PedestrianLaneMessage : IUpdateMessage
 {
     public bool Detected { get; set; }
 }
+
+public class BusLaneMessage : List<int>, IUpdateMessage
+{
+}
+
+public interface IUpdateMessage{}

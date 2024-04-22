@@ -27,4 +27,12 @@ public class Road
     {
         return Id;
     }
+    
+    public void Update()
+    {
+        foreach (var lane in Lanes)
+        {
+            lane.Value.Update(IUpdateMessage message);
+        }
+    }
 }

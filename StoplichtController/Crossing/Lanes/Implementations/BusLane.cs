@@ -5,14 +5,7 @@ namespace StoplichtController.Crossing.Lanes.Implementations;
 
 public class BusLane : Lane, IHasPath
 {   
-    [JsonProperty("Busses")]
     List<int> BusNumbers { get; set; }
-
-    public BusLane() : base()
-    {
-        
-    }
-
     public Path Path { get; }
     public bool IntersectsWith(string roadId)
     {
@@ -26,6 +19,12 @@ public class BusLane : Lane, IHasPath
 
     public bool Update(List<int> message)
     {
-        throw new NotImplementedException();
+        UpdateTime();
+        foreach (int busLine in message)
+        {
+            BusNumbers.Add(busLine);
+        }
+
+        return true;
     }
 }
