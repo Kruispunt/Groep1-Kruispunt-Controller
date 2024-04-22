@@ -14,11 +14,13 @@ public class PedestrianLane : Lane, ICrossesRoad
 
     public string CrossesRoad { get; }
 
-    public bool Update(PedestrianLaneMessage message)
+    protected override bool UpdateImplementation(IUpdateMessage message)
     {
-        UpdateTime();
-        PedestrianDetected = message.Detected;
-
+        if (message is not PedestrianLaneMessage updateMessage) return false;
+        if (updateMessage.Detected == PedestrianDetected) return false;
+            
+            
+        PedestrianDetected = updateMessage.Detected;
         return true;
     }
 }
