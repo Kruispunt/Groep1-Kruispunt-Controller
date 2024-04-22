@@ -7,38 +7,30 @@ public class CarLane : Lane, IHasPath
 {
     [JsonProperty("DetectNear")]
     public bool DetectNear { get; set; }
+
     [JsonProperty("DetectFar")]
     public bool DetectFar { get; set; }
+
     [JsonProperty("PrioCar")]
     public bool PrioCar { get; set; }
+
     public Path Path { get; }
 
-    public CarLane(string from, string to) : base()
+    public CarLane(string from, string to) : base() { Path = new Path(from, to); }
+
+
+    public bool IntersectsWith(string roadId) { throw new NotImplementedException(); }
+
+    public bool IntersectsWith(Lane lane) { throw new NotImplementedException(); }
+
+    public bool Update(CarLaneMessage message)
     {
-        Path = new Path(from, to);
+
+        DetectNear = message.DetectNear;
+        DetectFar = message.DetectFar;
+        PrioCar = message.PrioCar;
+
+        return true;
     }
 
-
-    public bool IntersectsWith(string roadId)
-    {
-        throw new NotImplementedException();
-    }
-
-    public bool IntersectsWith(Lane lane)
-    {
-        throw new NotImplementedException();
-    }
-
-    public override bool Update(ILaneMessage message)
-    {
-        if (message is CarLaneMessage carLaneMessage)
-        {
-            DetectNear = carLaneMessage.DetectNear;
-            DetectFar = carLaneMessage.DetectFar;
-            PrioCar = carLaneMessage.PrioCar;
-            return true;
-        }
-
-        return false;
-    }
 }

@@ -26,23 +26,21 @@ public class RoadMessage
 }
 
 [JsonObject]
-public class CarLaneMessage : ILaneMessage
+public class CarLaneMessage 
 {
     public bool DetectNear { get; set; }
     public bool DetectFar { get; set; }
     public bool PrioCar { get; set; }
 }
 
-public interface ILaneMessage{}
-
 [JsonObject]
-public class BikeLaneMessage : ILaneMessage
+public class BikeLaneMessage
 {
-    //todo
+    public bool Detected { get; set; }
 }
 
 [JsonObject]
-public class PedestrianLaneMessage : ILaneMessage
+public class PedestrianLaneMessage 
 {
-    //todo
+    public bool Detected { get; set; }
 }

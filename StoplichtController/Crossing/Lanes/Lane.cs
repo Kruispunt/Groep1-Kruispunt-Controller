@@ -4,7 +4,7 @@ using StoplichtController.Models;
 namespace StoplichtController.Crossing.Lanes;
 
 [Serializable]
-public abstract class Lane : IUpdateableLane
+public abstract class Lane 
 {
     Light Light { get; set; }
     
@@ -17,5 +17,4 @@ public abstract class Lane : IUpdateableLane
         }
     }
 
-    public abstract bool Update(ILaneMessage message);
 }

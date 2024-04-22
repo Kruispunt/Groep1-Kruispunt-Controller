@@ -24,7 +24,7 @@ public class BusLane : Lane, IHasPath
         throw new NotImplementedException();
     }
 
-    public override bool Update(ILaneMessage message)
+    public bool Update(List<int> message)
     {
         throw new NotImplementedException();
     }

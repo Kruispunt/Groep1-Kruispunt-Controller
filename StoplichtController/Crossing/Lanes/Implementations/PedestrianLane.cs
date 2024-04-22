@@ -23,7 +23,8 @@ public class PedestrianLane : Lane, ICrossesRoad
     }
 
     public string CrossesRoad { get; }
-    public override bool Update(ILaneMessage message)
+    
+    public bool Update(PedestrianLaneMessage message)
     {
         throw new NotImplementedException();
     }

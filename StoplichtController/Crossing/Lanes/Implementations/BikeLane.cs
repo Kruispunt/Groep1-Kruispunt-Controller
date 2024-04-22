@@ -23,7 +23,7 @@ public class BikeLane : Lane, ICrossesRoad
         throw new NotImplementedException();
     }
 
-    public override bool Update(ILaneMessage message)
+    public bool Update(BikeLaneMessage message)
     {
         throw new NotImplementedException();
     }
