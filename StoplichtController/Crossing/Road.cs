@@ -1,4 +1,5 @@
 using StoplichtController.Crossing.Lanes;
+using StoplichtController.Messages;
 
 namespace StoplichtController.Crossing;
 
@@ -28,11 +29,12 @@ public class Road
         return Id;
     }
     
-    public void Update()
+    public void Update(RoadMessage message)
     {
+        Console.WriteLine(message);
         foreach (var lane in Lanes)
         {
-            lane.Value.Update(IUpdateMessage message);
+            // lane.Value.Update(IUpdateMessage message);
         }
     }
 }

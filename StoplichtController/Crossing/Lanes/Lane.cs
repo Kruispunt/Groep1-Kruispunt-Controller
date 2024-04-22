@@ -8,7 +8,7 @@ public abstract class Lane
 {
     protected Light Light { get; set; }
     
-    protected DateTime LastUpdated { get; set; }
+    private DateTime LastUpdated { get; set; }
     
     public Lane()
     {
@@ -18,8 +18,17 @@ public abstract class Lane
             throw new InvalidOperationException("Lane must implement either ICrossesRoad or IHasPath interface");
         }
     }
+    public void Update(IUpdateMessage message)
+    {
+        if (UpdateImplementation(message))
+        {
+            UpdateTime();
+        }
+    }
 
-    protected void UpdateTime()
+    protected abstract bool UpdateImplementation(IUpdateMessage message);
+
+    private void UpdateTime()
     {
         LastUpdated = DateTime.UtcNow;
     } 

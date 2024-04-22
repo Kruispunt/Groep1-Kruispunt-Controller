@@ -17,15 +17,22 @@ public class CarLane : Lane, IHasPath
 
     public bool IntersectsWith(Lane lane) { throw new NotImplementedException(); }
 
-    public bool Update(CarLaneMessage message)
+    public void Update(CarLaneMessage message)
     {
-        UpdateTime();
-        
         DetectNear = message.DetectNear;
         DetectFar = message.DetectFar;
         PrioCar = message.PrioCar;
+    }
+
+    protected override bool UpdateImplementation(IUpdateMessage message)
+    {
+        if (message is not CarLaneMessage updateMessage) return false;
+        if (updateMessage.DetectNear == DetectNear &&
+            updateMessage.DetectFar == DetectFar &&
+            updateMessage.PrioCar == PrioCar) return false;
+
+        Update(updateMessage);
 
         return true;
     }
-
 }
