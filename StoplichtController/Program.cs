@@ -1,7 +1,7 @@
 using StoplichtController.Controller;
-using StoplichtController.Crossing;
-using StoplichtController.Crossing.Builder;
-using StoplichtController.Crossing.Lanes.Implementations;
+using StoplichtController.Crossings;
+using StoplichtController.Crossings.Builder;
+using StoplichtController.Crossings.Lanes.Implementations;
 
 CrossingManagerBuilder builder = new ();
 builder

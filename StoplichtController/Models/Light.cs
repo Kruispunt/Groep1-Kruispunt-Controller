@@ -1,6 +1,3 @@
-using System.Text.Json;
-using StoplichtController.Messages;
-
 namespace StoplichtController.Models;
 
 [Serializable]
@@ -43,7 +40,7 @@ public class Light
 
 public enum LightState
 {
-    Red,
-    Orange,
-    Green
+    Red = 0,
+    Orange = 1,
+    Green = 2
 }

@@ -1,14 +1,13 @@
-using System.Diagnostics;
-using StoplichtController.Crossing.Lanes;
-using StoplichtController.Crossing.Lanes.Implementations;
+using StoplichtController.Crossings.Lanes;
+using StoplichtController.Crossings.Lanes.Implementations;
 using StoplichtController.Messages;
 
-namespace StoplichtController.Crossing;
+namespace StoplichtController.Crossings;
 
 public class Road
 {
     private string Id { get; set; }
-    private List<Lane> Lanes { get; set; }
+    internal List<Lane> Lanes { get; set; }
     
     public Road(string id)
     {

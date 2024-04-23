@@ -1,27 +1,33 @@
+using Newtonsoft.Json;
 using StoplichtController.Messages;
-using StoplichtController.Crossing;
+using StoplichtController.Crossings;
+using StoplichtController.Crossings.Lanes.Implementations;
+using StoplichtController.Models;
+using StoplichtController.Policies;
 using StoplichtController.Server;
 
 namespace StoplichtController.Controller;
 
 public class TrafficLightController
 {
-    private CrossingManager _cm;
-    private CancellationTokenSource _cancellationTokenSource = new();
-    private TcpServer _server;
+    CrossingManager _crossingManager;
+    CancellationTokenSource _cancellationTokenSource = new();
+    readonly TcpServer _server;
 
-    public TrafficLightController(CrossingManager cm)
+    public TrafficLightController(CrossingManager crossingManager)
     {
-        _cm = cm;
+        _crossingManager = crossingManager;
         _server = new TcpServer(8080, this);
     }
 
     public async Task Start()
     {
-        var messageSendingTask = StartSendingMessagesAsync(_cancellationTokenSource.Token);
+        // todo: Debug the stateHandlingTask
+        var stateHandlingTask =
+            HandleStateAsync(_cancellationTokenSource.Token);
         var serverTask = _server.StartAsync(_cancellationTokenSource.Token);
 
-        await Task.WhenAll(messageSendingTask, serverTask);
+        await Task.WhenAll(stateHandlingTask, serverTask);
     }
 
 
@@ -34,31 +40,90 @@ public class TrafficLightController
         foreach (var crossingId in crossingMessage.Keys)
         {
             var roads = crossingMessage[crossingId];
-            var crossing = _cm.GetCrossing(crossingId);
+            var crossing = _crossingManager.GetCrossing(crossingId);
 
             crossing.UpdateCrossing(roads);
         }
     }
 
-    private async Task StartSendingMessagesAsync(CancellationToken token)
+    async Task HandleStateAsync(CancellationToken token)
     {
+        await Task.CompletedTask;
+        var policies = new List<IPolicy>
+        {
+            new EmergencyVehiclePolicy(),
+            // new PedestrianPolicy(),
+            // new BusPolicy(),
+            // new CyclistPolicy(),
+            // new CarPolicy()
+        };
+        var policyHandler = new PolicyHandler(_crossingManager, policies);
+
         while (!token.IsCancellationRequested)
         {
-            var message = GetStatusMessage();
-            _ = _server.SendMessageAsync(message);
-            await Task.Delay(3000);
+            policyHandler.HandlePolies();
+            if (policyHandler.AppliedPolicy)
+            {
+                var message = GetStateMessage();
+                _ = _server.SendMessageAsync(message);
+            }
+
         }
     }
 
 
-    private string GetStatusMessage()
+    private string GetStateMessage()
     {
-        string path =
-            "/Users/svenimholz/dev/Kruispunt/StoplichtController/StoplichtController/Messages/Examples/ControllerToSim.json";
 
-        string content = File.ReadAllText(path);
+        var crossingDict =
+            new Dictionary<int,
+                Dictionary<string, Dictionary<string, List<LightState>>>>();
 
-        return content;
+        foreach (var crossing in _crossingManager.GetCrossings())
+        {
+            var roadDict = new Dictionary<string, Dictionary<string, List<LightState>>>();
+
+            foreach (var road in crossing.Value.Roads)
+            {
+                var laneDict = new Dictionary<string, List<LightState>>
+                {
+                    {
+                        "Cars",
+                        road.Value.Lanes.OfType<CarLane>()
+                            .Select(lane => lane.Light.State)
+                            .ToList()
+                    },
+                    {
+                        "Cyclists", road.Value.Lanes.OfType<BikeLane>()
+                            .Select(
+                            lane => lane
+                                .Light.State)
+                            .ToList()
+                    },
+                    {
+                        "Pedestrians",
+                        road.Value.Lanes.OfType<PedestrianLane>()
+                            .Select(lane => lane.Light.State)
+                            .ToList()
+                    },
+                    {
+                        "Busses",
+                        road.Value.Lanes.OfType<BusLane>()
+                            .Select(lane => lane.Light.State)
+                            .ToList()
+                    }
+                };
+
+                roadDict.Add(road.Key, laneDict);
+            }
+
+            crossingDict.Add(crossing.Key, roadDict);
+        }
+
+        var jsonString = JsonConvert.SerializeObject(crossingDict);
+
+        return jsonString;
+
     }
 
     public void Stop()
@@ -67,6 +132,6 @@ public class TrafficLightController
         _server.Stop();
         _cancellationTokenSource.Dispose();
     }
-    
-    
+
+
 }

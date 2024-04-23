@@ -1,16 +1,16 @@
-using StoplichtController.Crossing.Lanes;
+using StoplichtController.Crossings.Lanes;
 
-namespace StoplichtController.Crossing.Builder;
+namespace StoplichtController.Crossings.Builder;
 
 public class CrossingManagerBuilder : ICrossingBuilder
 {
     private CrossingManager _crossingManager = new CrossingManager();
-    private Crossing? _lastCreatedCrossing;
+    private Crossings.Crossing? _lastCreatedCrossing;
     private Road _lastCreatedRoad = null!;
 
     public ICrossingBuilder AddCrossing(int crossingId)
     {
-        Crossing crossing = new Crossing(crossingId);
+        Crossings.Crossing crossing = new Crossings.Crossing(crossingId);
         _crossingManager.AddCrossing(crossingId, crossing);
         _lastCreatedCrossing = crossing;
         return this;

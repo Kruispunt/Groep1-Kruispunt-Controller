@@ -1,4 +1,4 @@
-namespace StoplichtController.Crossing;
+namespace StoplichtController.Crossings;
 
 public enum Direction
 {

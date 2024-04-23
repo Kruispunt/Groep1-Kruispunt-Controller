@@ -1,4 +1,5 @@
-namespace StoplichtController.Crossing.Lanes;
+
+namespace StoplichtController.Crossings.Lanes;
 
 public interface ICrossesRoad : ICanIntersect
 {

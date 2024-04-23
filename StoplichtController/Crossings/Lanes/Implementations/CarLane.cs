@@ -1,7 +1,6 @@
-using Newtonsoft.Json;
 using StoplichtController.Messages;
 
-namespace StoplichtController.Crossing.Lanes.Implementations;
+namespace StoplichtController.Crossings.Lanes.Implementations;
 
 public class CarLane : Lane, IHasPath
 {

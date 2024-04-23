@@ -1,6 +1,6 @@
 using StoplichtController.Messages;
 
-namespace StoplichtController.Crossing.Lanes.Implementations;
+namespace StoplichtController.Crossings.Lanes.Implementations;
 
 public class PedestrianLane : Lane, ICrossesRoad
 {

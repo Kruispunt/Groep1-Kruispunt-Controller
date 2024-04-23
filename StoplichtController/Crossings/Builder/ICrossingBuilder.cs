@@ -1,6 +1,6 @@
-using StoplichtController.Crossing.Lanes;
+using StoplichtController.Crossings.Lanes;
 
-namespace StoplichtController.Crossing.Builder;
+namespace StoplichtController.Crossings.Builder;
 
 public interface ICrossingBuilder
 {

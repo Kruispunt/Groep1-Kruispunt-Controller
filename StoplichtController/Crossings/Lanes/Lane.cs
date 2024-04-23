@@ -1,12 +1,12 @@
 using StoplichtController.Messages;
 using StoplichtController.Models;
 
-namespace StoplichtController.Crossing.Lanes;
+namespace StoplichtController.Crossings.Lanes;
 
 [Serializable]
 public abstract class Lane 
 {
-    protected Light Light { get; set; }
+    protected internal Light Light { get; set; }
     
     DateTime LastUpdated { get; set; }
 
