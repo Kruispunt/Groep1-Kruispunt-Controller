@@ -89,5 +89,5 @@ var policies = new List<IPolicy>
 
 var policyHandler = new PolicyHandler(policies);
 
-TrafficLightController controller = new(crossingManager, policyHandler);
+TrafficLightController controller = new TrafficLightController(crossingManager, policyHandler);
 await controller.StartAsync();
