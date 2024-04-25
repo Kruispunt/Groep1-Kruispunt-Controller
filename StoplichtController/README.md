@@ -13,36 +13,12 @@ Before you begin, ensure you have met the following requirements:
 
 To set up StoplichtController, follow these steps:
 
-### Windows
+### Windows and MacOS
 
 1. Clone the repository:
     ```
-    git clone https://github.com/username/StoplichtController.git
+   https://github.com/Kruispunt/Groep1-Kruispunt-Controller.git
     ```
-   Replace `username` with your GitHub username.
-
-2. Navigate to the project directory:
-    ```
-    cd StoplichtController
-    ```
-
-3. Restore the .NET packages:
-    ```
-    dotnet restore
-    ```
-
-4. Build the project:
-    ```
-    dotnet build
-    ```
-
-### macOS
-
-1. Clone the repository:
-    ```
-    git clone https://github.com/username/StoplichtController.git
-    ```
-   Replace `username` with your GitHub username.
 
 2. Navigate to the project directory:
     ```
