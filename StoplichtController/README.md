@@ -13,7 +13,7 @@ Before you begin, ensure you have met the following requirements:
 
 To set up StoplichtController, follow these steps:
 
-### Windows and MacOS
+### Windows and macOS
 
 1. Clone the repository:
     ```
@@ -43,13 +43,3 @@ To run StoplichtController, follow these steps:
     ```
     dotnet run --project StoplichtController
     ```
-
-## Contributing to StoplichtController
-
-To contribute to StoplichtController, follow these steps:
-
-1. Fork the repository.
-2. Create a new branch: `git checkout -b <branch_name>`.
-3. Make your changes and commit them: `git commit -m '<commit_message>'`
-4. Push to the original branch: `git push origin <project_name>/<location>`
-5. Create the pull request.
