@@ -2,20 +2,20 @@ namespace StoplichtController.Crossings;
 
 public class CrossingManager
 {
-    private Dictionary<int, Crossings.Crossing> _crossings = new ();
+    readonly Dictionary<int, Crossing> _crossings = new ();
 
-    public void AddCrossing(int id, Crossings.Crossing crossing)
+    public void AddCrossing(int id, Crossing crossing)
     {
         _crossings[id] = crossing;
     }
 
-    public Crossings.Crossing GetCrossing(int id)
+    public Crossing? GetCrossing(int id)
     {
         _crossings.TryGetValue(id, out var crossing);
         return crossing;
     }
     
-    public Dictionary<int, Crossings.Crossing> GetCrossings()
+    public Dictionary<int, Crossing> GetCrossings()
     {
         return _crossings;
     }

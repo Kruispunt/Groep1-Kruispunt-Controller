@@ -4,15 +4,16 @@ namespace StoplichtController.Crossings.Lanes.Implementations;
 
 public class BusLane : Lane, IHasPath
 {
-    List<int> BusNumbers { get; set; }
+    List<int> BusNumbers { get; set; } = new List<int>();
     public Path Path { get; }
+    
     public bool IntersectsWith(string roadId) { throw new NotImplementedException(); }
 
     public bool IntersectsWith(Lane lane) { throw new NotImplementedException(); }
 
     public void Update(List<int> message)
     {
-        foreach (int busLine in message)
+        foreach (var busLine in message)
         {
             BusNumbers.Add(busLine);
         }

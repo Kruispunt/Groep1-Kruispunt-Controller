@@ -62,6 +62,7 @@ public class TcpServer
                 }
             }
 
+            _clients.Remove(client);
             client.Close();
         }
         catch (OperationCanceledException)

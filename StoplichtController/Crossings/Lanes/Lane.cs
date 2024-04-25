@@ -1,5 +1,4 @@
 using StoplichtController.Messages;
-using StoplichtController.Models;
 
 namespace StoplichtController.Crossings.Lanes;
 

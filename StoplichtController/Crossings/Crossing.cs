@@ -6,6 +6,8 @@ namespace StoplichtController.Crossings;
 
 public class Crossing(int id)
 {
+    
+    public event Action<Crossing>? OnUpdateReceived;
     public int Id { get; set; } = id;
 
     internal Dictionary<string, Road> Roads { get; set; } = new();
@@ -30,6 +32,7 @@ public class Crossing(int id)
                 road.Value.Update(message);
             }
         }
+        OnUpdateReceived?.Invoke(this);
     }
     
     public bool HasPriorityVehicle()

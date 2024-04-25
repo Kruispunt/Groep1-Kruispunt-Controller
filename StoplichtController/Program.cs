@@ -2,8 +2,9 @@ using StoplichtController.Controller;
 using StoplichtController.Crossings;
 using StoplichtController.Crossings.Builder;
 using StoplichtController.Crossings.Lanes.Implementations;
+using StoplichtController.Policies;
 
-CrossingManagerBuilder builder = new ();
+CrossingManagerBuilder builder = new();
 builder
     .AddCrossing(1)
     .AddRoad("A")
@@ -22,6 +23,7 @@ builder
     .AddLane(new CarLane("B", "A"))
     .AddLane(new CarLane("B", "C"))
     .AddLane(new CarLane("B", "C"))
+    .AddLane(new BusLane())
     .AddLane(new BikeLane("B"))
     .AddLane(new BikeLane("B"))
     .AddLane(new PedestrianLane("B"))
@@ -55,7 +57,7 @@ builder
     .AddLane(new CarLane("E", "D"))
     .AddLane(new CarLane("E", "D"))
     .AddLane(new CarLane("E", "F"))
-    .AddLane(new CarLane("E", "F"))
+    .AddLane(new BusLane())
     .AddLane(new BikeLane("E"))
     .AddLane(new BikeLane("E"))
     .AddLane(new PedestrianLane("E"))
@@ -76,8 +78,16 @@ builder
 
 CrossingManager crossingManager = builder.Build();
 
-TrafficLightController controller = new (crossingManager);
-await controller.Start();
+var policies = new List<IPolicy>
+{
+    new EmergencyVehiclePolicy(),
+    // new PedestrianPolicy(),
+    // new BusPolicy(),
+    // new CyclistPolicy(),
+    // new CarPolicy()
+};
 
+var policyHandler = new PolicyHandler(policies);
 
-
+TrafficLightController controller = new(crossingManager, policyHandler);
+await controller.StartAsync();

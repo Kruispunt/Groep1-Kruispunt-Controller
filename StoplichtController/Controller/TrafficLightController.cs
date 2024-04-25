@@ -2,7 +2,6 @@ using Newtonsoft.Json;
 using StoplichtController.Messages;
 using StoplichtController.Crossings;
 using StoplichtController.Crossings.Lanes.Implementations;
-using StoplichtController.Models;
 using StoplichtController.Policies;
 using StoplichtController.Server;
 
@@ -10,24 +9,26 @@ namespace StoplichtController.Controller;
 
 public class TrafficLightController
 {
-    CrossingManager _crossingManager;
-    CancellationTokenSource _cancellationTokenSource = new();
+    readonly CrossingManager _crossingManager;
+    readonly CancellationTokenSource _cancellationTokenSource = new();
     readonly TcpServer _server;
 
-    public TrafficLightController(CrossingManager crossingManager)
+    public event Action<Crossing> OnUpdateReceived; 
+    
+    public TrafficLightController(CrossingManager crossingManager, PolicyHandler policyHandler)
     {
         _crossingManager = crossingManager;
         _server = new TcpServer(8080, this);
+
+        foreach (var crossing in _crossingManager.GetCrossings().Values)
+        {
+            crossing.OnUpdateReceived += policyHandler.ApplyPolicies;
+        }
     }
 
-    public async Task Start()
+    public async Task StartAsync()
     {
-        // todo: Debug the stateHandlingTask
-        var stateHandlingTask =
-            HandleStateAsync(_cancellationTokenSource.Token);
-        var serverTask = _server.StartAsync(_cancellationTokenSource.Token);
-
-        await Task.WhenAll(stateHandlingTask, serverTask);
+        await _server.StartAsync(_cancellationTokenSource.Token);
     }
 
 
@@ -42,35 +43,11 @@ public class TrafficLightController
             var roads = crossingMessage[crossingId];
             var crossing = _crossingManager.GetCrossing(crossingId);
 
-            crossing.UpdateCrossing(roads);
+            crossing?.UpdateCrossing(roads);
+            OnUpdateReceived?.Invoke(crossing);
+            _ = _server.SendMessageAsync(GetStateMessage());
         }
     }
-
-    async Task HandleStateAsync(CancellationToken token)
-    {
-        await Task.CompletedTask;
-        var policies = new List<IPolicy>
-        {
-            new EmergencyVehiclePolicy(),
-            // new PedestrianPolicy(),
-            // new BusPolicy(),
-            // new CyclistPolicy(),
-            // new CarPolicy()
-        };
-        var policyHandler = new PolicyHandler(_crossingManager, policies);
-
-        while (!token.IsCancellationRequested)
-        {
-            policyHandler.HandlePolies();
-            if (policyHandler.AppliedPolicy)
-            {
-                var message = GetStateMessage();
-                _ = _server.SendMessageAsync(message);
-            }
-
-        }
-    }
-
 
     private string GetStateMessage()
     {
