@@ -19,7 +19,7 @@ public class TrafficLightController
     public TrafficLightController(
         CrossingManager crossingManager,
         PolicyHandler policyHandler
-        )
+    )
     {
         _crossingManager = crossingManager;
         _crossingStateMessageGenerator = new CrossingStateMessageGenerator();
@@ -49,14 +49,14 @@ public class TrafficLightController
 
             if (crossing is null)
                 continue;
-            
+
             crossing?.UpdateCrossing(roads);
             OnUpdateReceived?.Invoke(crossing!);
-            
-            // TODO: This should be done based on the OnUpdateReceived event
-            _ = _server.SendMessageAsync(
-            _crossingStateMessageGenerator.GetStateMessage(_crossingManager));
+
         }
+
+        _ = _server.SendMessageAsync(
+        _crossingStateMessageGenerator.GetStateMessage(_crossingManager));
     }
 
     public void Stop()

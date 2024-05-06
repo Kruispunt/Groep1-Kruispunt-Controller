@@ -21,6 +21,8 @@ public class Light
     }
     
     public bool IsGreen() { return State == LightState.Green; }
+    
+    public int GetState() { return (int) State; }
 }
 
 public enum LightState
