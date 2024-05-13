@@ -1,7 +1,5 @@
-using Newtonsoft.Json;
 using StoplichtController.Messages;
 using StoplichtController.Crossings;
-using StoplichtController.Crossings.Lanes.Implementations;
 using StoplichtController.Policies;
 using StoplichtController.Server;
 
@@ -14,26 +12,45 @@ public class TrafficLightController
     readonly TcpServer _server;
     readonly CrossingStateMessageGenerator _crossingStateMessageGenerator;
 
-    public event Action<Crossing> OnUpdateReceived;
+    public event Action<Crossing>? OnUpdateReceived;
 
     public TrafficLightController(
         CrossingManager crossingManager,
         PolicyHandler policyHandler
     )
     {
-        _crossingManager = crossingManager;
         _crossingStateMessageGenerator = new CrossingStateMessageGenerator();
+        _crossingManager = crossingManager;
         _server = new TcpServer(8080, this);
 
         foreach (var crossing in _crossingManager.GetCrossings().Values)
         {
             crossing.OnUpdateReceived += policyHandler.ApplyPolicies;
         }
+        
     }
-
+    
     public async Task StartAsync()
     {
-        await _server.StartAsync(_cancellationTokenSource.Token);
+        var serverTask = Task.Run((() => _server.StartAsync(_cancellationTokenSource.Token)));
+
+        var messageSenderTask = Task.Run(() => MessageSender());
+
+        await Task.WhenAll(serverTask, messageSenderTask);
+    }
+    private async Task MessageSender()
+    {
+        while (!_cancellationTokenSource.IsCancellationRequested)
+        {
+            // Get the state of the crossings and creating a JSON message
+            var message = _crossingStateMessageGenerator.GetStateMessage(_crossingManager);
+            
+            // Send the message to all connected clients
+            await _server.SendMessageAsync(message);
+            
+            // Wait for 500ms before sending the next message
+            await Task.Delay(500);
+        }
     }
 
 
@@ -50,13 +67,10 @@ public class TrafficLightController
             if (crossing is null)
                 continue;
 
-            crossing?.UpdateCrossing(roads);
-            OnUpdateReceived?.Invoke(crossing!);
+            crossing.UpdateCrossing(roads);
+            OnUpdateReceived?.Invoke(crossing);
 
         }
-
-        _ = _server.SendMessageAsync(
-        _crossingStateMessageGenerator.GetStateMessage(_crossingManager));
     }
 
     public void Stop()

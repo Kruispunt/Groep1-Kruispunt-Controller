@@ -6,6 +6,7 @@ public class PolicyHandler
 {
     readonly IPolicy _firstPolicy;
     public bool AppliedPolicy { get; private set; } = false;
+    public event Action OnPolicyApplied;
     
     public PolicyHandler(List<IPolicy> policies)
     {
@@ -25,7 +26,12 @@ public class PolicyHandler
             
         while (policy is not null)
         {
-            policy = policy.Apply(crossing);
+            var nextPolicy = policy.Apply(crossing);
+            if (nextPolicy != policy)
+            {
+                OnPolicyApplied?.Invoke();
+            }
+            policy = nextPolicy;
         }
     }
 }
