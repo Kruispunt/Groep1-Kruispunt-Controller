@@ -76,7 +76,7 @@ builder
     .AddLane(new PedestrianLane("F"))
     .AddLane(new PedestrianLane("F"));
 
-CrossingManager crossingManager = builder.Build();
+var crossingManager = builder.Build();
 
 var policies = new List<IPolicy>
 {
@@ -89,5 +89,5 @@ var policies = new List<IPolicy>
 
 var policyHandler = new PolicyHandler(policies);
 
-TrafficLightController controller = new TrafficLightController(crossingManager, policyHandler);
+var controller = new TrafficLightController(crossingManager, policyHandler);
 await controller.StartAsync();
