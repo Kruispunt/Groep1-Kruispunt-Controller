@@ -5,7 +5,7 @@ namespace StoplichtController.Crossings.Lanes.Implementations;
 public class BikeLane : Lane, ICrossesRoad
 {
     public string CrossesRoad { get; }
-    public bool CyclistDetected { get; set; }
+    bool CyclistDetected { get; set; }
 
     public BikeLane(string crossesRoadId) : base() {}
 
@@ -23,4 +23,5 @@ public class BikeLane : Lane, ICrossesRoad
         CyclistDetected = updateMessage.Detected;
         return true;
     }
+    override public bool ShouldAddToWaitList() => CyclistDetected;
 }

@@ -84,7 +84,7 @@ var policies = new List<IPolicy>
     // new PedestrianPolicy(),
     // new BusPolicy(),
     // new CyclistPolicy(),
-    // new CarPolicy()
+    new CarPolicy()
 };
 
 var policyHandler = new PolicyHandler(policies);

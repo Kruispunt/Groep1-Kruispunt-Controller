@@ -16,8 +16,8 @@ public abstract class Policy : IPolicy
         _nextPolicy = nextPolicy;
         return _nextPolicy;
     }
-    public virtual IPolicy? Apply(Crossing crossing)
+    public virtual Task<IPolicy?> Apply(Crossing crossing)
     {
-        return _nextPolicy;
+        return Task.FromResult(_nextPolicy);
     }
 }

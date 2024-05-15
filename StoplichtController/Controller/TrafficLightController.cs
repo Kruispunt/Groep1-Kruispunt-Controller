@@ -25,7 +25,7 @@ public class TrafficLightController
 
         foreach (var crossing in _crossingManager.GetCrossings().Values)
         {
-            crossing.OnUpdateReceived += policyHandler.ApplyPolicies;
+            crossing.OnUpdateReceived += async (crossing) => await policyHandler.ApplyPolicies(crossing);
         }
         
     }

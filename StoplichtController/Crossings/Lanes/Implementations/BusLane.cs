@@ -4,8 +4,8 @@ namespace StoplichtController.Crossings.Lanes.Implementations;
 
 public class BusLane : Lane, IHasPath
 {
-    List<int> BusNumbers { get; set; } = new List<int>();
-    public Path Path { get; }
+    List<int> BusNumbers { get; set; } = [];
+    public Path Path { get; set; }
     
     public bool IntersectsWith(string roadId) { throw new NotImplementedException(); }
 
@@ -30,5 +30,6 @@ public class BusLane : Lane, IHasPath
         Update(updateMessage);
         return true;
    }
+    override public bool ShouldAddToWaitList() => BusNumbers.Count > 0;
 
 }

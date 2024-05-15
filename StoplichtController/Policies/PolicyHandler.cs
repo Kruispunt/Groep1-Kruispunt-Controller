@@ -1,4 +1,5 @@
 using StoplichtController.Crossings;
+using StoplichtController.Crossings.Lanes;
 
 namespace StoplichtController.Policies;
 
@@ -6,7 +7,7 @@ public class PolicyHandler
 {
     readonly IPolicy _firstPolicy;
     public bool AppliedPolicy { get; private set; } = false;
-    public event Action OnPolicyApplied;
+    public event Action? OnPolicyApplied;
     
     public PolicyHandler(List<IPolicy> policies)
     {
@@ -20,13 +21,13 @@ public class PolicyHandler
         _firstPolicy = policies[0];
     }
 
-    public void ApplyPolicies(Crossing crossing)
+    public async Task ApplyPolicies(Crossing crossing)
     {
         var policy = _firstPolicy;
             
         while (policy is not null)
         {
-            var nextPolicy = policy.Apply(crossing);
+            var nextPolicy = await policy.Apply(crossing);
             if (nextPolicy != policy)
             {
                 OnPolicyApplied?.Invoke();

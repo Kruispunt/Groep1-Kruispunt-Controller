@@ -6,6 +6,6 @@ public interface IPolicy
 {
     event Action? PolicyApplied;
     IPolicy SetNext(IPolicy nextPolicy);
-    IPolicy? Apply(Crossing crossing);
+    Task<IPolicy?> Apply(Crossing crossing);
     
 }
