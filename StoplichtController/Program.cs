@@ -1,5 +1,4 @@
 using StoplichtController.Controller;
-using StoplichtController.Crossings;
 using StoplichtController.Crossings.Builder;
 using StoplichtController.Crossings.Lanes.Implementations;
 using StoplichtController.Policies;
