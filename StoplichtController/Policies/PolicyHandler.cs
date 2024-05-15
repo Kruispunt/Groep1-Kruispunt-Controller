@@ -1,12 +1,10 @@
 using StoplichtController.Crossings;
-using StoplichtController.Crossings.Lanes;
 
 namespace StoplichtController.Policies;
 
 public class PolicyHandler
 {
     readonly IPolicy _firstPolicy;
-    public bool AppliedPolicy { get; private set; } = false;
     public event Action? OnPolicyApplied;
     
     public PolicyHandler(List<IPolicy> policies)
@@ -15,7 +13,6 @@ public class PolicyHandler
         for (int i = 0; i < policies.Count - 1; i++)
         {
             policies[i].SetNext(policies[i + 1]);
-            policies[i].PolicyApplied += () => AppliedPolicy = true;
         }
 
         _firstPolicy = policies[0];

@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using StoplichtController.Messages;
 using StoplichtController.Crossings;
 using StoplichtController.Policies;
@@ -11,8 +12,7 @@ public class TrafficLightController
     readonly CancellationTokenSource _cancellationTokenSource = new();
     readonly TcpServer _server;
     readonly CrossingStateMessageGenerator _crossingStateMessageGenerator;
-
-    public event Action<Crossing>? OnUpdateReceived;
+    readonly PolicyHandler _policyHandler;
 
     public TrafficLightController(
         CrossingManager crossingManager,
@@ -21,38 +21,58 @@ public class TrafficLightController
     {
         _crossingStateMessageGenerator = new CrossingStateMessageGenerator();
         _crossingManager = crossingManager;
+        _policyHandler = policyHandler;
         _server = new TcpServer(8080, this);
 
-        foreach (var crossing in _crossingManager.GetCrossings().Values)
-        {
-            crossing.OnUpdateReceived += async (crossing) => await policyHandler.ApplyPolicies(crossing);
-        }
-        
+
     }
-    
+
     public async Task StartAsync()
     {
-        var serverTask = Task.Run((() => _server.StartAsync(_cancellationTokenSource.Token)));
+        var serverTask =
+            Task.Run((() => _server.StartAsync(_cancellationTokenSource.Token)));
 
-        var messageSenderTask = Task.Run(() => MessageSender());
+        var messageSenderTask = Task.Run(MessageSender);
 
-        await Task.WhenAll(serverTask, messageSenderTask);
+        var policyHandlerTask = Task.Run(PolicyHandlerTask);
+
+        await Task.WhenAll(serverTask, messageSenderTask, policyHandlerTask);
     }
-    private async Task MessageSender()
+
+    async Task MessageSender()
     {
         while (!_cancellationTokenSource.IsCancellationRequested)
         {
             // Get the state of the crossings and creating a JSON message
-            var message = _crossingStateMessageGenerator.GetStateMessage(_crossingManager);
-            
+            var message =
+                _crossingStateMessageGenerator.GetStateMessage(_crossingManager);
+
             // Send the message to all connected clients
             await _server.SendMessageAsync(message);
-            
+
             // Wait for 500ms before sending the next message
             await Task.Delay(500);
         }
     }
 
+    async Task PolicyHandlerTask()
+    {
+        var crossingTasks = new ConcurrentDictionary<Crossing, Task>();
+        
+        while (!_cancellationTokenSource.IsCancellationRequested)
+        {
+            foreach (var crossing in _crossingManager.GetCrossings().Values)
+            {
+                if (crossing.WaitList.Count <= 0 || crossingTasks.ContainsKey(crossing))
+                    continue;
+                
+                var task = _policyHandler.ApplyPolicies(crossing);
+                crossingTasks.TryAdd(crossing, task);
+                _ = task.ContinueWith(t => crossingTasks.TryRemove(crossing, out _));
+            }
+            await Task.Delay(30);
+        }
+    }
 
     /// <summary>
     /// Updates the state of the crossing with the given id
@@ -64,12 +84,7 @@ public class TrafficLightController
             var roads = crossingMessage[crossingId];
             var crossing = _crossingManager.GetCrossing(crossingId);
 
-            if (crossing is null)
-                continue;
-
-            crossing.UpdateCrossing(roads);
-            OnUpdateReceived?.Invoke(crossing);
-
+            crossing?.UpdateCrossing(roads);
         }
     }
 
