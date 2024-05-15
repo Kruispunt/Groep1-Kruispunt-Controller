@@ -80,7 +80,7 @@ CrossingManager crossingManager = builder.Build();
 
 var policies = new List<IPolicy>
 {
-    new EmergencyVehiclePolicy(),
+    // new EmergencyVehiclePolicy(),
     // new PedestrianPolicy(),
     // new BusPolicy(),
     // new CyclistPolicy(),
