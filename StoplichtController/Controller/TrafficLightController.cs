@@ -1,6 +1,6 @@
 using System.Collections.Concurrent;
-using StoplichtController.Messages;
 using StoplichtController.Crossings;
+using StoplichtController.Messages;
 using StoplichtController.Policies;
 using StoplichtController.Server;
 
@@ -8,11 +8,11 @@ namespace StoplichtController.Controller;
 
 public class TrafficLightController
 {
-    readonly CrossingManager _crossingManager;
     readonly CancellationTokenSource _cancellationTokenSource = new();
-    readonly TcpServer _server;
+    readonly CrossingManager _crossingManager;
     readonly CrossingStateMessageGenerator _crossingStateMessageGenerator;
     readonly PolicyHandler _policyHandler;
+    readonly TcpServer _server;
 
     public TrafficLightController(
         CrossingManager crossingManager,
@@ -50,6 +50,7 @@ public class TrafficLightController
             // Send the message to all connected clients
             await _server.SendMessageAsync(message);
 
+            Console.WriteLine(message);
             // Wait for 500ms before sending the next message
             await Task.Delay(500);
         }
@@ -58,14 +59,14 @@ public class TrafficLightController
     async Task PolicyHandlerTask()
     {
         var crossingTasks = new ConcurrentDictionary<Crossing, Task>();
-        
+
         while (!_cancellationTokenSource.IsCancellationRequested)
         {
             foreach (var crossing in _crossingManager.GetCrossings().Values)
             {
                 if (crossing.WaitList.Count <= 0 || crossingTasks.ContainsKey(crossing))
                     continue;
-                
+
                 var task = _policyHandler.ApplyPolicies(crossing);
                 crossingTasks.TryAdd(crossing, task);
                 _ = task.ContinueWith(t => crossingTasks.TryRemove(crossing, out _));
@@ -94,5 +95,4 @@ public class TrafficLightController
         _server.Stop();
         _cancellationTokenSource.Dispose();
     }
-
 }

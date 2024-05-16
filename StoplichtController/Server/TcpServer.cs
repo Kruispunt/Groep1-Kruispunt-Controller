@@ -1,28 +1,23 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using Newtonsoft.Json;
 using StoplichtController.Controller;
 using StoplichtController.Messages;
-using Newtonsoft.Json;
 
 namespace StoplichtController.Server;
 
-public class TcpServer
+public class TcpServer(int port, TrafficLightController controller)
 {
-    private TcpListener _listener;
-    private List<TcpClient> _clients = new List<TcpClient>();
-    private TrafficLightController _controller;
+    readonly List<TcpClient> _clients = [];
+    readonly TcpListener _listener = new(IPAddress.Any, port);
 
-    public TcpServer(int port, TrafficLightController controller)
-    {
-        _listener = new TcpListener(IPAddress.Any, port);
-        _controller = controller;
-    }
-    
     public async Task StartAsync(CancellationToken token)
     {
         _listener.Start();
-        Console.WriteLine("Server started on {0}. Waiting for connections...", _listener.LocalEndpoint);
+        Console.WriteLine(
+        "Server started on {0}. Waiting for connections...",
+        _listener.LocalEndpoint);
 
         while (!token.IsCancellationRequested)
         {
@@ -47,23 +42,24 @@ public class TcpServer
 
         try
         {
-            using (NetworkStream stream = client.GetStream())
+            await using (var stream = client.GetStream())
             {
-                byte[] buffer = new byte[5000];
-                int bytesRead;
-
-                while ((bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length, token)) > 0)
+                while (!token.IsCancellationRequested && client.Connected)
                 {
-                    string message = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+                    var memoryStream = new MemoryStream();
+                    await stream.CopyToAsync(memoryStream, token);
+                    var buffer = memoryStream.ToArray();
+
+                    var message = Encoding.UTF8.GetString(buffer);
                     Console.WriteLine(message);
 
-                    CrossingMessage crossingMessage = await HandleMessageAsync(message, stream, token);
-                    _controller.HandleUpdate(crossingMessage);
+                    var crossingMessage = await HandleMessageAsync(message);
+                    controller.HandleUpdate(crossingMessage);
                 }
-            }
 
-            _clients.Remove(client);
-            client.Close();
+                _clients.Remove(client);
+                client.Close();
+            }
         }
         catch (OperationCanceledException)
         {
@@ -76,23 +72,26 @@ public class TcpServer
 
     }
 
-    private async Task<CrossingMessage> HandleMessageAsync(string message, NetworkStream stream, CancellationToken token)
+    async Task<CrossingMessage> HandleMessageAsync(
+        string message
+    )
     {
-        CrossingMessage crossingMessage = JsonConvert.DeserializeObject<CrossingMessage>(message) ??
-                                          throw new InvalidOperationException();
+        var crossingMessage =
+            JsonConvert.DeserializeObject<CrossingMessage>(message) ??
+            throw new InvalidOperationException();
 
         return crossingMessage;
     }
 
     public async Task SendMessageAsync(string message)
     {
-        byte[] buffer = Encoding.UTF8.GetBytes(message);
+        var buffer = Encoding.UTF8.GetBytes(message);
 
-        foreach (var client in _clients)
+        foreach (var client in _clients.Where(client => client.Connected))
         {
             if (client.Connected)
             {
-                await client.GetStream().WriteAsync(buffer, 0, buffer.Length);
+                await client.GetStream().WriteAsync(buffer);
             }
         }
     }
