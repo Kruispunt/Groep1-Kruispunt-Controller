@@ -21,7 +21,7 @@ public class TcpServer(int port, TrafficLightController controller)
 
         while (!token.IsCancellationRequested)
         {
-            TcpClient client = await _listener.AcceptTcpClientAsync();
+            var client = await _listener.AcceptTcpClientAsync(token);
             _ = HandleClientAsync(client, token);
         }
     }
