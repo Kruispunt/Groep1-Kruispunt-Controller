@@ -50,7 +50,7 @@ public class TrafficLightController
             // Send the message to all connected clients
             await _server.SendMessageAsync(message);
 
-            Console.WriteLine(message);
+            // Console.WriteLine(message);
             // Wait for 500ms before sending the next message
             await Task.Delay(500);
         }
@@ -76,7 +76,7 @@ public class TrafficLightController
     }
 
     /// <summary>
-    /// Updates the state of the crossing with the given id
+    /// Updates the state of the crossing
     /// </summary> /// <param name="crossingMessage">It's a dictionary with only one key value pair</param>
     public void HandleUpdate(CrossingMessage crossingMessage)
     {
