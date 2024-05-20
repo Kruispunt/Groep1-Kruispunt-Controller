@@ -15,14 +15,14 @@ public class TcpServer(int port, TrafficLightController controller)
     public async Task StartAsync(CancellationToken token)
     {
         _listener.Start();
-        Console.WriteLine(
+        WriteLine(
         "Server started on {0}. Waiting for connections...",
         _listener.LocalEndpoint);
 
         while (!token.IsCancellationRequested)
         {
             var client = await _listener.AcceptTcpClientAsync(token);
-            _ = HandleClientAsync(client, token);
+            _ = HandleClientAsync(client);
         }
     }
 
@@ -36,30 +36,40 @@ public class TcpServer(int port, TrafficLightController controller)
         _clients.Clear();
     }
 
-    private async Task HandleClientAsync(TcpClient client, CancellationToken token)
+    async Task HandleClientAsync(TcpClient client)
     {
         _clients.Add(client);
 
         try
         {
-            await using (var stream = client.GetStream())
+            var buffer = new byte[5000];
+            while (client.Connected)
             {
-                while (!token.IsCancellationRequested && client.Connected)
+                var bytesRead =
+                    await client.Client.ReceiveAsync(
+                    new ArraySegment<byte>(buffer),
+                    SocketFlags.None);
+
+                if (bytesRead <= 0)
+                    continue;
+                var message = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+
+                if (!IsValidJson<CrossingMessage>(message))
+                    continue;
+
+
+                WriteLine(message);
+                var crossingMessage = await HandleMessageAsync(message);
+                try
                 {
-                    var memoryStream = new MemoryStream();
-                    await stream.CopyToAsync(memoryStream, token);
-                    var buffer = memoryStream.ToArray();
-
-                    var message = Encoding.UTF8.GetString(buffer);
-                    Console.WriteLine(message);
-
-                    var crossingMessage = await HandleMessageAsync(message);
                     controller.HandleUpdate(crossingMessage);
                 }
-
-                _clients.Remove(client);
-                client.Close();
+                catch (Exception e)
+                {
+                    WriteLine(e);
+                }
             }
+
         }
         catch (OperationCanceledException)
         {
@@ -67,12 +77,40 @@ public class TcpServer(int port, TrafficLightController controller)
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error: {ex.Message}");
+            WriteLine($"Error: {ex.Message}");
         }
 
     }
+    static bool IsValidJson<T>(string strInput)
+    {
+        strInput = strInput.Trim();
 
-    async Task<CrossingMessage> HandleMessageAsync(
+        if (("{".StartsWith(strInput) && "}".EndsWith(strInput)) || //For object
+            ("[".StartsWith(strInput) && "]".EndsWith(strInput))) //For array
+            try
+            {
+                _ = JsonConvert.DeserializeObject<T>(strInput);
+
+                return true;
+            }
+            catch (JsonReaderException jex)
+            {
+                //Exception in parsing json
+                WriteLine(jex.Message);
+
+                return false;
+            }
+            catch (Exception ex) //some other exception
+            {
+                WriteLine(ex.ToString());
+
+                return false;
+            }
+
+        return false;
+    }
+
+    static Task<CrossingMessage> HandleMessageAsync(
         string message
     )
     {
@@ -80,7 +118,7 @@ public class TcpServer(int port, TrafficLightController controller)
             JsonConvert.DeserializeObject<CrossingMessage>(message) ??
             throw new InvalidOperationException();
 
-        return crossingMessage;
+        return Task.FromResult(crossingMessage);
     }
 
     public async Task SendMessageAsync(string message)
