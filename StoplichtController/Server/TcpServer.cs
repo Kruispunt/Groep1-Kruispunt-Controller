@@ -86,34 +86,6 @@ public class TcpServer(int port, TrafficLightController controller)
             WriteLine($"Error: {ex.Message}");
         }
     }
-    static bool IsValidJson<T>(string strInput)
-    {
-        strInput = strInput.Trim();
-
-        if (("{".StartsWith(strInput) && "}".EndsWith(strInput)) || //For object
-            ("[".StartsWith(strInput) && "]".EndsWith(strInput))) //For array
-            try
-            {
-                _ = JsonConvert.DeserializeObject<T>(strInput);
-
-                return true;
-            }
-            catch (JsonReaderException jex)
-            {
-                //Exception in parsing json
-                WriteLine(jex.Message);
-
-                return false;
-            }
-            catch (Exception ex) //some other exception
-            {
-                WriteLine(ex.ToString());
-
-                return false;
-            }
-
-        return false;
-    }
 
     static Task<CrossingMessage> HandleMessageAsync(
         string message
