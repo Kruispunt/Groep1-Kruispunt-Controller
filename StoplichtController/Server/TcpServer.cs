@@ -40,45 +40,15 @@ public class TcpServer(int port, TrafficLightController controller)
     {
         _clients.Add(client);
 
-        try
+        var handleUpdateTask = HandleUpdateTask(client);
+        while (client.Connected)
         {
-            var buffer = new byte[5000];
-            while (client.Connected)
-            {
-                var bytesRead =
-                    await client.Client.ReceiveAsync(
-                    new ArraySegment<byte>(buffer),
-                    SocketFlags.None);
-
-                if (bytesRead <= 0)
-                    continue;
-                var message = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-
-                if (!IsValidJson<CrossingMessage>(message))
-                    continue;
-
-
-                WriteLine(message);
-                var crossingMessage = await HandleMessageAsync(message);
-                try
-                {
-                    controller.HandleUpdate(crossingMessage);
-                }
-                catch (Exception e)
-                {
-                    WriteLine(e);
-                }
-            }
-
+            handleUpdateTask.Wait();
+            handleUpdateTask = HandleUpdateTask(client);
         }
-        catch (OperationCanceledException)
-        {
-            // The operation was canceled. This is expected when the server is stopped
-        }
-        catch (Exception ex)
-        {
-            WriteLine($"Error: {ex.Message}");
-        }
+
+        return Task.CompletedTask;
+
 
     }
     static bool IsValidJson<T>(string strInput)
