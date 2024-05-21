@@ -2,14 +2,10 @@ using StoplichtController.Messages;
 
 namespace StoplichtController.Crossings.Lanes.Implementations;
 
-public class BikeLane(string crossesRoadId) : Lane, ICrossesRoad
+public class BikeLane(string crossesRoadId) : LaneCrossingRoad(crossesRoadId)
 {
     bool CyclistDetected { get; set; }
-    public string CrossesRoad { get; } = crossesRoadId;
-
-    public bool IntersectsWith(string roadId) { throw new NotImplementedException(); }
-
-    public bool IntersectsWith(Lane lane) { throw new NotImplementedException(); }
+    new public string CrossesRoad { get; } = crossesRoadId;
 
     public void Update(BikeLaneMessage message) { CyclistDetected = message.Detected; }
 

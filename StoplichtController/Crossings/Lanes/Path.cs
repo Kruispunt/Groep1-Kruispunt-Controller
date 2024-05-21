@@ -2,10 +2,7 @@ namespace StoplichtController.Crossings.Lanes;
 
 public class Path
 {
-    private string From { get; set; }
-    private string To { get; set; }
-    
-    
+
 
     public Path(string from, string to)
     {
@@ -17,4 +14,6 @@ public class Path
         From = from;
         To = to;
     }
+    public string From { get; set; }
+    public string To { get; set; }
 }

@@ -2,34 +2,36 @@ using StoplichtController.Messages;
 
 namespace StoplichtController.Crossings.Lanes.Implementations;
 
-public class BusLane : Lane, IHasPath
+public class BusLane(string from, string to) : LaneWithPath(from, to)
 {
-    List<int> BusNumbers { get; set; } = [];
-    public Path Path { get; set; }
-    
-    public bool IntersectsWith(string roadId) { throw new NotImplementedException(); }
-
-    public bool IntersectsWith(Lane lane) { throw new NotImplementedException(); }
+    List<int> BusNumbers { get; } = [];
 
     public void Update(List<int> message)
     {
+        if (message.Count == 0)
+        {
+            BusNumbers.RemoveAll(_ => true);
+
+            return;
+        }
         foreach (var busLine in message)
         {
             BusNumbers.Add(busLine);
         }
     }
-    
+
     protected override bool UpdateImplementation(IUpdateMessage message)
     {
         if (message is not BusLaneMessage updateMessage) return false;
-        
+
         BusNumbers.Sort();
         updateMessage.Sort();
-        if (BusNumbers.SequenceEqual(updateMessage)) return false;
-        
-        Update(updateMessage);
-        return true;
-   }
-    override public bool ShouldAddToWaitList() => BusNumbers.Count > 0;
 
+        if (BusNumbers.SequenceEqual(updateMessage)) return false;
+
+        Update(updateMessage);
+
+        return true;
+    }
+    override public bool ShouldAddToWaitList() => BusNumbers.Count > 0;
 }

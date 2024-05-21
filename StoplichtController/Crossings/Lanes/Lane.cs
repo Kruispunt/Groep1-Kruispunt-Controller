@@ -5,7 +5,6 @@ namespace StoplichtController.Crossings.Lanes;
 [Serializable]
 public abstract class Lane
 {
-
     protected Lane()
     {
         Light = new Light();

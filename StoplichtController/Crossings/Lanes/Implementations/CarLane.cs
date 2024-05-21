@@ -2,17 +2,11 @@ using StoplichtController.Messages;
 
 namespace StoplichtController.Crossings.Lanes.Implementations;
 
-public class CarLane(string from, string to) : Lane, IHasPath
+public class CarLane(string from, string to) : LaneWithPath(from, to)
 {
-    public bool DetectNear { get; set; }
-    public bool DetectFar { get; set; }
-    public bool PrioCar { get; set; }
-    public Path Path { get; } = new(from, to);
-
-
-    public bool IntersectsWith(string roadId) { throw new NotImplementedException(); }
-
-    public bool IntersectsWith(Lane lane) { throw new NotImplementedException(); }
+    public bool DetectNear { get; private set; }
+    public bool DetectFar { get; private set; }
+    public bool PrioCar { get; private set; }
 
     void Update(CarLaneMessage message)
     {
