@@ -36,7 +36,7 @@ public class TcpServer(int port, TrafficLightController controller)
         _clients.Clear();
     }
 
-    async Task HandleClientAsync(TcpClient client)
+    Task HandleClientAsync(TcpClient client)
     {
         _clients.Add(client);
 
