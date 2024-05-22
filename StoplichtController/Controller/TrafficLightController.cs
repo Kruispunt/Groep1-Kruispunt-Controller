@@ -23,8 +23,6 @@ public class TrafficLightController
         _crossingManager = crossingManager;
         _policyHandler = policyHandler;
         _server = new TcpServer(8080, this);
-
-
     }
 
     public async Task StartAsync()
@@ -67,7 +65,7 @@ public class TrafficLightController
                 if (crossing.WaitList.Count <= 0 || crossingTasks.ContainsKey(crossing))
                     continue;
 
-                var task = _policyHandler.ApplyPolicies(crossing);
+                var task = _policyHandler.ApplyPolicy(crossing);
                 crossingTasks.TryAdd(crossing, task);
                 _ = task.ContinueWith(t => crossingTasks.TryRemove(crossing, out _));
             }
