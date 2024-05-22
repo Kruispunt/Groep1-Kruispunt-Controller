@@ -1,4 +1,6 @@
 using StoplichtController.Crossings;
+using StoplichtController.Crossings.Lanes;
+using StoplichtController.Crossings.Lanes.Implementations;
 
 namespace StoplichtController.Policies;
 
@@ -9,23 +11,36 @@ public class CarPolicy : Policy
         if (crossing.WaitList.Count <= 0) return await base.Apply(crossing);
 
         // Turn the light green for the lane with the highest priority and red for all other lanes
-        var highestPriorityLane = crossing.WaitList.Peek();
-        foreach (var lane in crossing.Roads.SelectMany(road => road.Value.Lanes))
-        {
-            if (lane == highestPriorityLane)
-            {
-                lane.Light.Green();
-                await Task.Delay(TimeSpan.FromSeconds(4));
-                lane.Light.Orange();
-                await Task.Delay(TimeSpan.FromSeconds(1));
-                lane.Light.Red();
-                await Task.Delay(TimeSpan.FromSeconds(2));
-                crossing.WaitList.Dequeue();
+        var highestPriorityLane = crossing.WaitList.First().Value;
 
-                break;
-            }
-            lane.Light.Red();
+        var goToGreenList = new List<Lane> { highestPriorityLane };
+        var waitList = crossing.WaitList.Values;
+
+        foreach (var lane in waitList)
+            if (goToGreenList.All(greenLane => !greenLane.IntersectsWith(lane)))
+                goToGreenList.Add(lane);
+
+        var greenTime = TimeSpan.FromSeconds(4);
+        var orangeTime = TimeSpan.FromSeconds(2);
+        var evacuationTime = TimeSpan.FromSeconds(5);
+
+        foreach (var lane in goToGreenList)
+        {
+            if (lane is BikeLane or PedestrianLane)
+                evacuationTime = TimeSpan.FromSeconds(6);
+            lane.Light.Green();
         }
+
+        await Task.Delay(greenTime);
+        foreach (var lane in goToGreenList)
+            lane.Light.Orange();
+        await Task.Delay(orangeTime);
+        foreach (var lane in goToGreenList)
+        {
+            lane.Light.Red();
+            crossing.WaitList.Remove(lane.GetPriority());
+        }
+        await Task.Delay(evacuationTime);
 
         OnPolicyApplied();
 

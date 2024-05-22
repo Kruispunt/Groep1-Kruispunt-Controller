@@ -4,16 +4,21 @@ public abstract class LaneWithPath(string from, string to) : Lane, IHasPath
 {
     public Path Path { get; } = new(from, to);
 
-    public bool IntersectsWith(Lane lane)
+    override public bool IntersectsWith(Lane lane)
     {
-        return lane switch
+        switch (lane)
         {
-            IHasPath pathLane => Path.From != pathLane.Path.From &&
-                                 Path.From == pathLane.Path.To &&
-                                 Path.To == pathLane.Path.From,
-            ICrossesRoad crossesRoadLane => Path.From == crossesRoadLane.CrossesRoad ||
-                                            Path.To == crossesRoadLane.CrossesRoad,
-            _ => false
-        };
+            case IHasPath other:
+                if (Path.From == other.Path.From)
+                    return false;
+
+                return Path.From != other.Path.To || Path.To != other.Path.From;
+
+
+            case ICrossesRoad crossesRoadLane:
+                return Path.From == crossesRoadLane.CrossesRoad ||
+                       Path.To == crossesRoadLane.CrossesRoad;
+            default: return true;
+        }
     }
 }
