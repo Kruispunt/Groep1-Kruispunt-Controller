@@ -53,7 +53,7 @@ public class LaneWithPathTests
     }
 
     [Test]
-    public void IntersectsWith_OtherLane_ReturnsTrue()
+    public void IntersectsWith_DifferentFromWithSameTo_ReturnsTrue()
     {
         var otherLane = new CarLane("C", "B");
         Assert.That(_laneWithPath.IntersectsWith(otherLane), Is.True);
