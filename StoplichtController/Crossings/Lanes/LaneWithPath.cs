@@ -12,12 +12,16 @@ public abstract class LaneWithPath(string from, string to) : Lane, IHasPath
                 if (Path.From == other.Path.From)
                     return false;
 
+                if (Path.To == other.Path.To && Path.From != other.Path.From)
+                    return true;
+
                 return Path.From != other.Path.To || Path.To != other.Path.From;
 
 
             case ICrossesRoad crossesRoadLane:
                 return Path.From == crossesRoadLane.CrossesRoad ||
                        Path.To == crossesRoadLane.CrossesRoad;
+
             default: return true;
         }
     }
