@@ -78,7 +78,7 @@ builder
 
 var crossingManager = builder.Build();
 
-var policyHandler = new PolicyHandler(new CarPolicy());
+var policyHandler = new PolicyHandler(new PriorityPolicy());
 
 var controller = new TrafficLightController(crossingManager, policyHandler);
 await controller.StartAsync();
