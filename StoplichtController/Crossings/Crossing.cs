@@ -34,7 +34,7 @@ public class Crossing(int id)
                      lane => lane.ShouldAddToWaitList()))
             {
                 lane.SetPriority();
-                WaitList.Add(lane.GetPriority(), lane);
+                WaitList.Add(lane.GetPriority()!, lane);
             }
         }
         OnUpdateReceived?.Invoke(this);

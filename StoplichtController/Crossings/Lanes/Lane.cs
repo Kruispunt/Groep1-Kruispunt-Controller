@@ -15,13 +15,13 @@ public abstract class Lane : ICanIntersect
         }
     }
     protected internal Light Light { get; set; }
-    public LanePriority Priority { get; private set; }
+    public LanePriority? Priority { get; private set; }
 
     public abstract bool IntersectsWith(Lane lane);
     public void Update(IUpdateMessage message) { UpdateImplementation(message); }
 
     protected abstract bool UpdateImplementation(IUpdateMessage message);
     public abstract bool ShouldAddToWaitList();
-    public LanePriority GetPriority() => Priority;
+    public LanePriority? GetPriority() => Priority;
     public void SetPriority() => Priority = new LanePriority(this);
 }

@@ -5,7 +5,7 @@ namespace StoplichtController.Crossings.Lanes;
 public class LanePriority(Lane lane) : IComparable<LanePriority>
 {
     DateTime TimeAdded { get; set; } = DateTime.Now;
-    TimeSpan TimeInQueue => DateTime.Now - TimeAdded; 
+    TimeSpan TimeInQueue => DateTime.Now - TimeAdded;
 
     bool HasPriorityVehicle
     {
@@ -52,4 +52,10 @@ public class LanePriority(Lane lane) : IComparable<LanePriority>
             }
         };
     }
+
+    public static bool operator <=(LanePriority left, LanePriority right) =>
+        left.CompareTo(right) <= 0;
+
+    public static bool operator >=(LanePriority left, LanePriority right) =>
+        left.CompareTo(right) >= 0;
 }
