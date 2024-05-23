@@ -4,7 +4,7 @@ using StoplichtController.Crossings.Lanes.Implementations;
 
 namespace StoplichtController.Policies;
 
-public class CarPolicy : Policy
+public class PriorityPolicy : Policy
 {
     override public async Task<IPolicy?> Apply(Crossing crossing)
     {
