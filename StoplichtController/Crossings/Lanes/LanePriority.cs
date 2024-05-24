@@ -37,21 +37,19 @@ public class LanePriority(Lane lane) : IComparable<LanePriority>
     {
         if (other is null) return 1;
 
-        return HasPriorityVehicle switch
-        {
-            // Prioritize lanes with a priority vehicle
-            true when !other.HasPriorityVehicle => -1,
-            false when other.HasPriorityVehicle => 1,
-            _ => HasManyWaitingVehicles switch
+        return (TimeInQueue.TotalSeconds, HasPriorityVehicle,
+            HasManyWaitingVehicles) switch
             {
-                // Prioritize lanes with more waiting vehicles
-                true when !other.HasManyWaitingVehicles => -1,
-                false when other.HasManyWaitingVehicles => 1,
-                // Prioritize lanes with longer wait times
+                (_, true, _) when !other.HasPriorityVehicle => -1,
+                (_, false, _) when other.HasPriorityVehicle => 1,
+                (_, _, true) when !other.HasManyWaitingVehicles => -1,
+                (_, _, false) when other.HasManyWaitingVehicles => 1,
+                (> 60, _, _) => -1,
+                (<= 60, _, _) when other.TimeInQueue.TotalSeconds > 60 => 1,
                 _ => TimeInQueue.CompareTo(other.TimeInQueue)
-            }
-        };
+            };
     }
+
 
     public static bool operator <=(LanePriority left, LanePriority right) =>
         left.CompareTo(right) <= 0;
