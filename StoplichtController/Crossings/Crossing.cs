@@ -33,8 +33,11 @@ public class Crossing(int id)
             foreach (var lane in road.Value.Lanes.Where(
                      lane => lane.ShouldAddToWaitList()))
             {
+                if (WaitList.ContainsKey(lane.GetPriority()))
+                    continue;
+
                 lane.SetPriority();
-                WaitList.Add(lane.GetPriority()!, lane);
+                WaitList.TryAdd(lane.GetPriority(), lane);
             }
         }
         OnUpdateReceived?.Invoke(this);

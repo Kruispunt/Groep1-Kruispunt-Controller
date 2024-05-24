@@ -56,7 +56,7 @@ builder
     .AddLane(new BusLane("E", "F"))
     .AddLane(new BusLane("E", "D"))
     .AddLane(new CarLane("E", "F"))
-    .AddLane(new CarLane("E", "F"))
+    .AddLane(new CarLane("E", "D"))
     .AddLane(new CarLane("E", "D"))
     .AddLane(new BikeLane("E"))
     .AddLane(new BikeLane("E"))

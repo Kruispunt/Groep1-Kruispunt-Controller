@@ -16,7 +16,7 @@ public class PriorityPolicy : Policy
         var goToGreenList = new List<Lane> { highestPriorityLane };
         var waitList = crossing.WaitList.Values;
 
-        foreach (var lane in waitList)
+        foreach (var lane in crossing.Roads.Values.SelectMany(road => road.Lanes))
             if (goToGreenList.All(greenLane => !greenLane.IntersectsWith(lane)))
                 goToGreenList.Add(lane);
 

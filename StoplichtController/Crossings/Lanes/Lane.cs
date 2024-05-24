@@ -22,6 +22,12 @@ public abstract class Lane : ICanIntersect
 
     protected abstract bool UpdateImplementation(IUpdateMessage message);
     public abstract bool ShouldAddToWaitList();
-    public LanePriority? GetPriority() => Priority;
+    public LanePriority GetPriority()
+    {
+        if (Priority is null)
+            SetPriority();
+
+        return Priority!;
+    }
     public void SetPriority() => Priority = new LanePriority(this);
 }
